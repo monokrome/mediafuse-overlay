@@ -345,6 +345,8 @@ function setup({ register: reg, manifest }) {
       const isRecovery = Date.now() - mountTime < 1000;
       const nextSide = side === "right" ? "left" : "right";
       side = nextSide;
+      layoutSide = nextSide;
+      updateLayout();
       displayed = incoming;
 
       removeHeadline(headlineEl);
@@ -352,8 +354,6 @@ function setup({ register: reg, manifest }) {
       banner.appendChild(headlineEl.wrapper);
 
       if (isRecovery) {
-        layoutSide = nextSide;
-        updateLayout();
         fetch(msgUrl, { method: "PATCH" });
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
@@ -369,8 +369,6 @@ function setup({ register: reg, manifest }) {
       }
 
       const startExpand = () => {
-        layoutSide = nextSide;
-        updateLayout();
         fetch(msgUrl, { method: "PATCH" });
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
