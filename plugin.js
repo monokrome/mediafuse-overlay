@@ -82,6 +82,7 @@ function setup({ register: reg, manifest }) {
       pointerEvents: "none",
       opacity: "0.97",
       fontSize: "clamp(1rem, 2.2vw, 2rem)",
+      justifyContent: "flex-end",
     });
 
     brandTag = el("div", {
@@ -90,7 +91,6 @@ function setup({ register: reg, manifest }) {
       alignItems: "center",
       padding: "0.4em 0.6em",
       background: PANEL_BG,
-      order: "2",
       flexShrink: "0",
       clipPath: "inset(0 0 0 100%)",
       transition: `clip-path ${SLIDE_MS}ms ease-in-out`,
@@ -132,7 +132,7 @@ function setup({ register: reg, manifest }) {
       transition: `flex-grow ${ANIM_MS}ms ease-in-out, padding ${ANIM_MS}ms ease-in-out`,
       padding: "0",
       margin: "0 -1px",
-      order: headlineSide === "right" ? "3" : "1",
+      order: "1",
     });
 
     const inner = el("div", {
@@ -143,7 +143,7 @@ function setup({ register: reg, manifest }) {
       gap: "0.5em",
       padding: "0.4em 0",
       transition: `padding ${ANIM_MS}ms ease-in-out`,
-      flexDirection: headlineSide === "right" ? "row" : "row-reverse",
+      flexDirection: "row",
     });
 
     const textWrap = el("div", {
@@ -211,19 +211,13 @@ function setup({ register: reg, manifest }) {
   }
 
   function updateLayout() {
-    banner.style.justifyContent =
-      layoutSide === "right" ? "flex-end" : "flex-start";
+    // no-op: brand is always flex-end anchored
   }
 
   function updateLogo() {
-    if (logoVisible) {
-      brandTag.style.clipPath = "inset(0 0 0 0)";
-    } else {
-      brandTag.style.clipPath =
-        layoutSide === "right"
-          ? "inset(0 0 0 100%)"
-          : "inset(0 100% 0 0)";
-    }
+    brandTag.style.clipPath = logoVisible
+      ? "inset(0 0 0 0)"
+      : "inset(0 0 0 100%)";
   }
 
   function showLogo() {
@@ -343,13 +337,10 @@ function setup({ register: reg, manifest }) {
     // First message (no current display)
     if (!displayed) {
       const isRecovery = Date.now() - mountTime < 1000;
-      // Headline goes on the opposite side of the logo
-      const headlineSide = layoutSide === "right" ? "left" : "right";
-      side = headlineSide;
       displayed = incoming;
 
       removeHeadline(headlineEl);
-      headlineEl = createHeadline(incoming, headlineSide);
+      headlineEl = createHeadline(incoming, "left");
       banner.appendChild(headlineEl.wrapper);
 
       if (isRecovery) {
@@ -391,17 +382,12 @@ function setup({ register: reg, manifest }) {
 
     // Swap: new message while one is displayed
     swapCount += 1;
-    const nextSide = side === "right" ? "left" : "right";
 
     outgoingEl = headlineEl;
     outgoingExpanded = true;
-
-    side = nextSide;
-    layoutSide = nextSide;
-    updateLayout();
     displayed = incoming;
 
-    headlineEl = createHeadline(incoming, nextSide);
+    headlineEl = createHeadline(incoming, "left");
     banner.appendChild(headlineEl.wrapper);
     expanded = false;
 
