@@ -1,0 +1,17 @@
+{
+  "v": 1,
+  "plugins": [
+    {
+      "src": "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-plugins/plugins/beefweb/src/index.js",
+      "allowTypes": ["data"]
+    },
+    {
+      "src": "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-overlay/plugin.js",
+      "allowTypes": ["overlay"]
+    }
+  ],
+  "blocks": [],
+  "config": {
+    "brandName": "monokromatic"
+  }
+}
