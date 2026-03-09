@@ -16,11 +16,10 @@ const LOGO_IDLE_INTERVAL = 15 * 60000;
 
 export default function (p) {
   let brandName = "MONOKROMATIC";
-  let font = null;
 
-  // Animation state
-  let logoAlpha = 0;
-  let logoTargetAlpha = 0;
+  // Animation state (0–1 normalized)
+  let logoReveal = 0;
+  let logoRevealTarget = 0;
   let headlineExpand = 0;
   let headlineTarget = 0;
 
@@ -55,22 +54,20 @@ export default function (p) {
     const fontSize = p.width * 0.022;
     const subtitleSize = fontSize * 0.55;
     const bannerBottom = p.height - 15;
-    const bannerLeft = p.width * 0.27;
     const bannerRight = p.width * 0.73;
-    const bannerW = bannerRight - bannerLeft;
 
     // Measure brand
     p.textSize(fontSize);
     brandW = p.textWidth(brandName) + padX * 2;
     brandH = fontSize + padY * 2;
 
-    // Lerp animations
-    logoAlpha = p.lerp(logoAlpha, logoTargetAlpha, LERP_SPEED);
+    // Lerp animations (0–1)
+    logoReveal = p.lerp(logoReveal, logoRevealTarget, LERP_SPEED);
     headlineExpand = p.lerp(headlineExpand, headlineTarget, LERP_SPEED);
 
     // Snap when close enough
-    if (Math.abs(logoAlpha - logoTargetAlpha) < 0.5) logoAlpha = logoTargetAlpha;
-    if (Math.abs(headlineExpand - headlineTarget) < 0.5) headlineExpand = headlineTarget;
+    if (Math.abs(logoReveal - logoRevealTarget) < 0.005) logoReveal = logoRevealTarget;
+    if (Math.abs(headlineExpand - headlineTarget) < 0.005) headlineExpand = headlineTarget;
 
     // Measure headline
     if (hasMessage && currentTitle) {
@@ -82,43 +79,40 @@ export default function (p) {
       }
       headlineW = tw + padX * 2;
 
-      // Add space for music icon
       if (currentType === "music") {
         headlineW += fontSize + 8;
       }
     }
 
-    const brandVisible = logoAlpha > 0.5;
-    const headlineVisible = headlineExpand > 0.5;
+    if (logoReveal < 0.005 && headlineExpand < 0.005) return;
 
-    if (!brandVisible && !headlineVisible) return;
+    // Brand is always at this fixed position
+    const brandX = bannerRight - brandW;
+    const brandY = bannerBottom - brandH;
 
-    // Positions: brand anchored to right, headline expands left from brand
-    const brandX = bannerRight - (brandW * logoAlpha) / 255;
-    const headlineActualW = headlineW * (headlineExpand / 255);
+    // Headline grows leftward from brand
+    const headlineActualW = headlineW * headlineExpand;
     const headlineX = brandX - headlineActualW - gap;
 
+    const ctx = p.drawingContext;
     p.push();
     p.noStroke();
 
-    // Draw headline panel
-    if (headlineVisible && headlineActualW > 1) {
+    // Draw headline panel (clipped to expanding width)
+    if (headlineExpand > 0.005 && headlineActualW > 1) {
       p.fill(PANEL_COLOR[0], PANEL_COLOR[1], PANEL_COLOR[2], PANEL_COLOR[3]);
-      p.rect(headlineX, bannerBottom - brandH, headlineActualW, brandH);
+      p.rect(headlineX, brandY, headlineActualW, brandH);
 
       // Clip text to headline bounds
-      p.push();
-      const ctx = p.drawingContext;
       ctx.save();
       ctx.beginPath();
-      ctx.rect(headlineX, bannerBottom - brandH, headlineActualW, brandH);
+      ctx.rect(headlineX, brandY, headlineActualW, brandH);
       ctx.clip();
 
       const textX = headlineX + padX;
       const centerY = bannerBottom - brandH / 2;
 
       if (currentSubtitle) {
-        // Title + subtitle stacked
         p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
         p.textSize(fontSize);
         p.textAlign(p.LEFT, p.BOTTOM);
@@ -135,7 +129,6 @@ export default function (p) {
         p.text(currentTitle, textX, centerY);
       }
 
-      // Music icon
       if (currentType === "music") {
         const iconSize = fontSize * 0.8;
         const iconX = headlineX + headlineActualW - padX - iconSize;
@@ -149,18 +142,27 @@ export default function (p) {
       }
 
       ctx.restore();
-      p.pop();
     }
 
-    // Draw brand panel
-    if (brandVisible) {
-      p.fill(PANEL_COLOR[0], PANEL_COLOR[1], PANEL_COLOR[2], PANEL_COLOR[3]);
-      p.rect(brandX, bannerBottom - brandH, brandW, brandH);
+    // Draw brand panel — revealed in-place via clip (right-to-left)
+    if (logoReveal > 0.005) {
+      const revealW = brandW * logoReveal;
+      const clipX = brandX + brandW - revealW;
 
-      p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2], logoAlpha);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(clipX, brandY, revealW, brandH);
+      ctx.clip();
+
+      p.fill(PANEL_COLOR[0], PANEL_COLOR[1], PANEL_COLOR[2], PANEL_COLOR[3]);
+      p.rect(brandX, brandY, brandW, brandH);
+
+      p.fill(255);
       p.textSize(fontSize);
       p.textAlign(p.CENTER, p.CENTER);
       p.text(brandName, brandX + brandW / 2, bannerBottom - brandH / 2);
+
+      ctx.restore();
     }
 
     p.pop();
@@ -175,7 +177,7 @@ export default function (p) {
       // After collapse, hide logo then start idle cycle
       clearTimers();
       logoHideTimer = setTimeout(() => {
-        logoTargetAlpha = 0;
+        logoRevealTarget = 0;
         startIdleCycle();
       }, LOGO_HIDE_DELAY);
       return;
@@ -195,11 +197,11 @@ export default function (p) {
     clearTimers();
 
     // Show logo first, then expand headline
-    logoTargetAlpha = 255;
+    logoRevealTarget = 1;
 
-    const expandDelay = logoAlpha < 128 ? LOGO_SHOW_DELAY : 0;
+    const expandDelay = logoReveal < 0.5 ? LOGO_SHOW_DELAY : 0;
     setTimeout(() => {
-      headlineTarget = 255;
+      headlineTarget = 1;
     }, expandDelay);
   };
 
@@ -212,9 +214,9 @@ export default function (p) {
 
   function startIdleCycle() {
     logoIdleTimer = setInterval(() => {
-      logoTargetAlpha = 255;
+      logoRevealTarget = 1;
       logoHideTimer = setTimeout(() => {
-        logoTargetAlpha = 0;
+        logoRevealTarget = 0;
       }, LOGO_IDLE_SHOW);
     }, LOGO_IDLE_INTERVAL);
   }
