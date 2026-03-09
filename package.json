@@ -1,0 +1,7 @@
+{
+  "name": "mediafuse-overlay",
+  "private": true,
+  "mediafuse": {
+    "manifest": "./manifest.json"
+  }
+}
