@@ -343,14 +343,13 @@ function setup({ register: reg, manifest }) {
     // First message (no current display)
     if (!displayed) {
       const isRecovery = Date.now() - mountTime < 1000;
-      const nextSide = side === "right" ? "left" : "right";
-      side = nextSide;
-      layoutSide = nextSide;
-      updateLayout();
+      // Headline goes on the opposite side of the logo
+      const headlineSide = layoutSide === "right" ? "left" : "right";
+      side = headlineSide;
       displayed = incoming;
 
       removeHeadline(headlineEl);
-      headlineEl = createHeadline(incoming, nextSide);
+      headlineEl = createHeadline(incoming, headlineSide);
       banner.appendChild(headlineEl.wrapper);
 
       if (isRecovery) {
