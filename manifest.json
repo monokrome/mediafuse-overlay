@@ -6,12 +6,13 @@
       "allowTypes": ["data"]
     },
     {
-      "src": "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-overlay/plugin.js",
+      "src": "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-plugins/plugins/p5/src/index.js",
       "allowTypes": ["overlay"]
     }
   ],
   "blocks": [],
   "config": {
-    "brandName": "monokromatic"
+    "brandName": "monokromatic",
+    "sketch": "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-overlay/sketch.js"
   }
 }
