@@ -22,7 +22,8 @@ export function drawBrand(p, s, ctx, brandName) {
   p.fill(255);
   p.textSize(s.fontSize);
   p.textAlign(p.CENTER, p.CENTER);
-  p.text(brandName, s.brandX + s.brandW / 2, s.bannerBottom - s.brandH / 2);
+  const textY = s.bannerBottom - s.brandH / 2 + s.fontSize * 0.08;
+  p.text(brandName, s.brandX + s.brandW / 2, textY);
 
   ctx.restore();
 }
