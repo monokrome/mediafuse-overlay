@@ -8,6 +8,8 @@ export function messageReceived(s, msg) {
   if (!msg) {
     s.hasMessage = false;
     s.headlineTarget = 0;
+    s.currentTitle = "";
+    s.currentSubtitle = "";
 
     clearTimers(s);
     startLogoHide(s);
@@ -17,7 +19,7 @@ export function messageReceived(s, msg) {
   const title = msg.data?.title || "";
   const subtitle = msg.data?.subtitle || "";
 
-  if (title === s.currentTitle && subtitle === s.currentSubtitle) return;
+  if (msg.timestamp === s.messageTimestamp) return;
 
   clearTimers(s);
 
@@ -36,6 +38,8 @@ export function messageReceived(s, msg) {
     s.currentTitle = title;
     s.currentSubtitle = subtitle;
     s.currentType = msg.type;
+    s.durationMs = msg.durationMs ?? null;
+    s.messageTimestamp = msg.timestamp;
 
     s.headlineExpand = 0;
     s.headlineTarget = 1;
@@ -48,6 +52,8 @@ export function messageReceived(s, msg) {
     s.currentTitle = title;
     s.currentSubtitle = subtitle;
     s.currentType = msg.type;
+    s.durationMs = msg.durationMs ?? null;
+    s.messageTimestamp = msg.timestamp;
     return;
   }
 
@@ -58,6 +64,8 @@ function applyMessage(s, msg) {
   s.currentTitle = msg.data?.title || "";
   s.currentSubtitle = msg.data?.subtitle || "";
   s.currentType = msg.type;
+  s.durationMs = msg.durationMs ?? null;
+  s.messageTimestamp = msg.timestamp;
   s.hasMessage = true;
   s.hasOutgoing = false;
 

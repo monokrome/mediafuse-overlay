@@ -8,8 +8,8 @@ export function drawBrand(p, s, ctx, brandName) {
 
   const revealW = s.brandW * s.logoReveal;
   const clipX = s.brandSide === "right"
-    ? s.brandX + s.brandW - revealW
-    : s.brandX;
+    ? s.brandX
+    : s.brandX + s.brandW - revealW;
 
   ctx.save();
   ctx.beginPath();

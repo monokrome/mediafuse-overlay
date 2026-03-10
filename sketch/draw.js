@@ -38,11 +38,12 @@ export function draw(p, s, brandName) {
   if (Math.abs(s.logoReveal - s.logoRevealTarget) < 0.005) s.logoReveal = s.logoRevealTarget;
   if (Math.abs(s.headlineExpand - s.headlineTarget) < 0.005) s.headlineExpand = s.headlineTarget;
 
-  // Expansion complete — flip brandSide, clear outgoing
+  // Expansion complete — flip brandSide, clear outgoing, start display timer
   if (s.isExpanding && s.headlineExpand >= 0.995) {
     s.isExpanding = false;
     s.brandSide = s.brandSide === "right" ? "left" : "right";
     s.hasOutgoing = false;
+    if (typeof p.messageDisplayed === "function") p.messageDisplayed(s.durationMs);
   }
 
   // Collapse complete — reset to default side once logo has also exited

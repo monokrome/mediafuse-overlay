@@ -20,6 +20,8 @@ export function createState() {
     currentTitle: "",
     currentSubtitle: "",
     currentType: null,
+    durationMs: null,
+    messageTimestamp: 0,
     hasMessage: false,
 
     // Outgoing content (during simultaneous swap)

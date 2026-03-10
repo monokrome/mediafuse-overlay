@@ -1,8 +1,8 @@
 {
   "v": 1,
   "plugins": [
-    "beefweb",
-    "mediafuse-p5"
+    "@mediafuse/beefweb",
+    "@mediafuse/p5"
   ],
   "config": {
     "brandName": "monokromatic",
