@@ -1,11 +1,11 @@
 {
   "v": 1,
   "plugins": [
-    "@mediafuse/beefweb",
-    "@mediafuse/p5"
+    "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-plugins@main/plugins/beefweb/dist/beefweb.js",
+    "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-plugins@main/plugins/p5/dist/p5-plugin.js"
   ],
   "config": {
     "brandName": "monokromatic",
-    "sketch": "./sketch.js"
+    "sketch": "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-overlay@main/sketch.js"
   }
 }
