@@ -28,7 +28,7 @@ export function drawOutgoing(p, s, ctx) {
   ctx.clip();
 
   const centerY = s.bannerBottom - s.brandH / 2 + 3;
-  drawTextContent(p, s, s.outTitle, s.outSubtitle, s.outType, outCenterX, centerY, outHlX, outW, s.brandSide === "right");
+  drawTextContent(p, s, s.outTitle, s.outSubtitle, s.outType, outCenterX, centerY, outHlX, outW, s.brandSide === "left");
 
   ctx.restore();
 }
@@ -69,9 +69,7 @@ export function drawIncoming(p, s, ctx) {
   ctx.clip();
 
   const centerY = s.bannerBottom - s.brandH / 2 + 3;
-  const brandOnLeft = s.isExpanding
-    ? s.brandSide === "right"
-    : s.brandSide === "left";
+  const brandOnLeft = s.brandSide === "left";
   drawTextContent(p, s, s.currentTitle, s.currentSubtitle, s.currentType, hlCenterX, centerY, hlX, inW, brandOnLeft);
 
   ctx.restore();
