@@ -12,10 +12,12 @@ export function drawOutgoing(p, s, ctx) {
   let outHlX, outCenterX;
 
   if (s.brandSide === "right") {
+    // Brand on right — outgoing headline was on the left, shrinks from left edge
     outHlX = s.bannerLeft;
     outCenterX = s.bannerLeft + s.headlineFullW / 2;
   } else {
-    outHlX = s.brandX + s.brandW;
+    // Brand on left — outgoing headline was on the right, shrinks from right edge
+    outHlX = s.bannerRight - outW;
     outCenterX = s.bannerRight - s.headlineFullW / 2;
   }
 
@@ -43,10 +45,13 @@ export function drawIncoming(p, s, ctx) {
   let hlX, hlCenterX;
 
   if (s.isExpanding) {
+    // Brand is moving away from brandSide — headline grows on the side the brand is leaving
     if (s.brandSide === "right") {
-      hlX = s.brandX + s.brandW;
+      // Brand moving left, headline grows from the right edge
+      hlX = s.bannerRight - inW;
       hlCenterX = s.bannerRight - s.headlineFullW / 2;
     } else {
+      // Brand moving right, headline grows from the left edge
       hlX = s.bannerLeft;
       hlCenterX = s.bannerLeft + s.headlineFullW / 2;
     }
