@@ -1,10 +1,12 @@
 {
   "v": 1,
   "plugins": [
+    "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-plugins@main/plugins/sentry/dist/sentry.js",
     "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-plugins@main/plugins/beefweb/dist/beefweb.js",
     "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-plugins@main/plugins/p5/dist/p5-plugin.js"
   ],
   "config": {
+    "sentryDsn": "https://8a254f93fabcb8b0cd8b2b00de09d0c3@o4511136962117632.ingest.de.sentry.io/4511136965591120",
     "brandName": "monokromatic",
     "sketch": "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-overlay@main/sketch.js"
   }
