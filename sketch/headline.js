@@ -74,7 +74,12 @@ export function drawIncoming(p, s, ctx) {
   ctx.clip();
 
   const centerY = s.bannerBottom - s.brandH / 2 + 3;
-  const brandOnLeft = s.brandSide === "left";
+  // During expansion, brand is moving TO the opposite side — so after
+  // the flip it will be on the opposite of brandSide. The icon should
+  // be placed as if the brand is already at its destination.
+  const brandOnLeft = s.isExpanding
+    ? s.brandSide !== "left"
+    : s.brandSide === "left";
   drawTextContent(p, s, s.currentTitle, s.currentSubtitle, s.currentType, hlCenterX, centerY, hlX, inW, brandOnLeft);
 
   ctx.restore();
