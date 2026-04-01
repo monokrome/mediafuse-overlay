@@ -18,7 +18,7 @@ export function getOppositeSide(side) {
 }
 
 export function getBrandSide(s) {
-  return s.brandSide.get();
+  return s.brandSide;
 }
 
 export function getIconSide(s) {
@@ -26,7 +26,7 @@ export function getIconSide(s) {
 }
 
 export function getBrandX(s) {
-  return s.brandSide.get() === SIDE_LEFT ? s.bannerLeft : s.bannerRight - s.brandW;
+  return s.brandSide === SIDE_LEFT ? s.bannerLeft : s.bannerRight - s.brandW;
 }
 
 export function getHeadlineEdge(s, side) {
