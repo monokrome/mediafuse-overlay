@@ -1,6 +1,6 @@
 import {
   PANEL_COLOR, TEXT_COLOR, SUBTITLE_COLOR, PAD_X,
-  SIDE_LEFT, SIDE_RIGHT, getIconSide, getHeadlineCenter,
+  SIDE_LEFT, SIDE_RIGHT, getOppositeSide, getIconSide, getHeadlineCenter,
 } from "./constants.js";
 
 /**
@@ -12,7 +12,7 @@ export function drawOutgoing(p, s, ctx) {
 
   let outHlX, outCenterX;
 
-  const outSide = s.brandSide === SIDE_RIGHT ? SIDE_LEFT : SIDE_RIGHT;
+  const outSide = s.brandSide;
   outHlX = outSide === SIDE_LEFT ? s.bannerLeft : s.bannerRight - outW;
   outCenterX = getHeadlineCenter(s, outSide);
 
@@ -40,7 +40,7 @@ export function drawIncoming(p, s, ctx) {
   let hlX, hlCenterX;
 
   if (s.isExpanding) {
-    const growSide = s.brandSide === SIDE_RIGHT ? SIDE_RIGHT : SIDE_LEFT;
+    const growSide = getOppositeSide(s.brandSide);
     hlX = growSide === SIDE_LEFT ? s.bannerLeft : s.bannerRight - inW;
     hlCenterX = getHeadlineCenter(s, growSide);
   } else {

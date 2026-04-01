@@ -46,10 +46,9 @@ export function draw(p, s, brandName) {
   if (Math.abs(s.logoReveal - s.logoRevealTarget) < 0.005) s.logoReveal = s.logoRevealTarget;
   if (Math.abs(s.headlineExpand - s.headlineTarget) < 0.005) s.headlineExpand = s.headlineTarget;
 
-  // Expansion complete — flip brandSide, clear outgoing, start exit timer
+  // Expansion complete — clear outgoing, start exit timer
   if (s.isExpanding && s.headlineExpand >= 0.995) {
     s.isExpanding = false;
-    s.brandSide = getOppositeSide(s.brandSide);
     s.hasOutgoing = false;
 
     if (typeof p.messageDisplayed === "function") p.messageDisplayed(s.durationMs);
@@ -82,7 +81,7 @@ export function draw(p, s, brandName) {
   s.brandY = brandY;
 
   if (s.isExpanding) {
-    s.brandX = s.brandSide === SIDE_RIGHT
+    s.brandX = s.brandSide === SIDE_LEFT
       ? bannerRight - brandW - s.headlineFullW * s.headlineExpand
       : bannerLeft + s.headlineFullW * s.headlineExpand;
   } else {

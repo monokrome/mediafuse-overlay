@@ -25,11 +25,6 @@ export function messageReceived(s, msg) {
 
   // Simultaneous swap: old becomes outgoing, new starts expanding
   if (s.hasMessage && s.headlineExpand > 0.1) {
-    // If mid-expansion, the brand flip never happened — do it now
-    if (s.isExpanding) {
-      s.brandSide = getOppositeSide(s.brandSide);
-    }
-
     s.outTitle = s.currentTitle;
     s.outSubtitle = s.currentSubtitle;
     s.outType = s.currentType;
@@ -41,6 +36,7 @@ export function messageReceived(s, msg) {
     s.durationMs = msg.durationMs ?? null;
     s.messageTimestamp = msg.timestamp;
 
+    s.brandSide = getOppositeSide(s.brandSide);
     s.headlineExpand = 0;
     s.headlineTarget = 1;
     s.isExpanding = true;
@@ -69,6 +65,7 @@ function applyMessage(s, msg) {
   s.hasMessage = true;
   s.hasOutgoing = false;
 
+  s.brandSide = getOppositeSide(s.brandSide);
   s.isExpanding = true;
   s.logoRevealTarget = 1;
 
