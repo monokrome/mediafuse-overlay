@@ -46,5 +46,6 @@ export function createState() {
     logoIdleTimer: null,
     logoHideTimer: null,
     expandTimer: null,
+    displayTimer: null,
   };
 }

@@ -1,6 +1,7 @@
 import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y } from "./constants.js";
 import { drawBrand } from "./brand.js";
 import { drawOutgoing, drawIncoming } from "./headline.js";
+import { clearTimers, startLogoHide } from "./timers.js";
 
 function dtLerp(current, target, speed, dt) {
   const factor = 1 - Math.pow(1 - speed, dt * TARGET_FPS);
@@ -45,12 +46,25 @@ export function draw(p, s, brandName) {
   if (Math.abs(s.logoReveal - s.logoRevealTarget) < 0.005) s.logoReveal = s.logoRevealTarget;
   if (Math.abs(s.headlineExpand - s.headlineTarget) < 0.005) s.headlineExpand = s.headlineTarget;
 
-  // Expansion complete — flip brandSide, clear outgoing, start display timer
+  // Expansion complete — flip brandSide, clear outgoing, start exit timer
   if (s.isExpanding && s.headlineExpand >= 0.995) {
     s.isExpanding = false;
     s.brandSide = s.brandSide === "right" ? "left" : "right";
     s.hasOutgoing = false;
+
     if (typeof p.messageDisplayed === "function") p.messageDisplayed(s.durationMs);
+
+    if (s.durationMs !== null && s.durationMs > 0) {
+      clearTimers(s);
+      s.displayTimer = setTimeout(() => {
+        s.hasMessage = false;
+        s.headlineTarget = 0;
+        s.currentTitle = "";
+        s.currentSubtitle = "";
+        clearTimers(s);
+        startLogoHide(s);
+      }, s.durationMs);
+    }
   }
 
   // Collapse complete — reset to default side once logo has also exited

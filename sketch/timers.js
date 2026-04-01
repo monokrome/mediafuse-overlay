@@ -4,9 +4,11 @@ export function clearTimers(s) {
   if (s.logoIdleTimer) clearInterval(s.logoIdleTimer);
   if (s.logoHideTimer) clearTimeout(s.logoHideTimer);
   if (s.expandTimer) clearTimeout(s.expandTimer);
+  if (s.displayTimer) clearTimeout(s.displayTimer);
   s.logoIdleTimer = null;
   s.logoHideTimer = null;
   s.expandTimer = null;
+  s.displayTimer = null;
 }
 
 export function startLogoHide(s) {
