@@ -1,12 +1,19 @@
-import { LERP_SPEED, PAD_X, PAD_Y } from "./constants.js";
+import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y } from "./constants.js";
 import { drawBrand } from "./brand.js";
 import { drawOutgoing, drawIncoming } from "./headline.js";
+
+function dtLerp(current, target, speed, dt) {
+  const factor = 1 - Math.pow(1 - speed, dt * TARGET_FPS);
+  return current + (target - current) * factor;
+}
 
 /**
  * Main draw loop. Updates animation state and renders all elements.
  */
 export function draw(p, s, brandName) {
   p.clear();
+
+  const dt = Math.min(p.deltaTime / 1000, 0.1);
 
   const fontSize = Math.max(16, Math.min(p.width * 0.022, 32));
   const subtitleSize = fontSize * 0.55;
@@ -30,9 +37,9 @@ export function draw(p, s, brandName) {
   s.brandH = brandH;
   s.headlineFullW = bannerW - brandW;
 
-  // Lerp
-  s.logoReveal = p.lerp(s.logoReveal, s.logoRevealTarget, LERP_SPEED);
-  s.headlineExpand = p.lerp(s.headlineExpand, s.headlineTarget, LERP_SPEED);
+  // Lerp (frame-rate independent)
+  s.logoReveal = dtLerp(s.logoReveal, s.logoRevealTarget, LERP_SPEED, dt);
+  s.headlineExpand = dtLerp(s.headlineExpand, s.headlineTarget, LERP_SPEED, dt);
 
   // Snap
   if (Math.abs(s.logoReveal - s.logoRevealTarget) < 0.005) s.logoReveal = s.logoRevealTarget;

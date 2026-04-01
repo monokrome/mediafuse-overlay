@@ -2,6 +2,7 @@ export const PANEL_COLOR = [75, 50, 110, 242];
 export const TEXT_COLOR = [255, 255, 255];
 export const SUBTITLE_COLOR = [200, 160, 255, 200];
 export const LERP_SPEED = 0.12;
+export const TARGET_FPS = 60;
 export const LOGO_PAUSE_MS = 3000;
 export const LOGO_HIDE_DELAY_MS = 3000;
 export const LOGO_IDLE_SHOW = 90000;
