@@ -22,6 +22,10 @@ export function getBrandSide(s) {
 }
 
 export function getIconSide(s) {
+  // During expansion, brand hasn't flipped yet — it's moving TO the
+  // opposite side. The icon goes opposite of the destination, which
+  // is the same as the current brandSide.
+  if (s.isExpanding) return getBrandSide(s);
   return getOppositeSide(getBrandSide(s));
 }
 
