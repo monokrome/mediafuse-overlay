@@ -9,6 +9,6 @@
   "config": {
     "sentryDsn": "https://8a254f93fabcb8b0cd8b2b00de09d0c3@o4511136962117632.ingest.de.sentry.io/4511136965591120",
     "brandName": "monokromatic",
-    "sketch": "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-overlay@main/sketch.js"
+    "sketch": "./sketch.js"
   }
 }
