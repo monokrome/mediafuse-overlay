@@ -13,16 +13,16 @@ export function clearTimers(s) {
 
 export function startLogoHide(s) {
   s.logoHideTimer = setTimeout(() => {
-    s.logoRevealTarget.set(0);
+    s.logoRevealTarget = 0;
     startIdleCycle(s);
   }, LOGO_HIDE_DELAY_MS);
 }
 
 export function startIdleCycle(s) {
   s.logoIdleTimer = setInterval(() => {
-    s.logoRevealTarget.set(1);
+    s.logoRevealTarget = 1;
     s.logoHideTimer = setTimeout(() => {
-      s.logoRevealTarget.set(0);
+      s.logoRevealTarget = 0;
     }, LOGO_IDLE_SHOW);
   }, LOGO_IDLE_INTERVAL);
 }

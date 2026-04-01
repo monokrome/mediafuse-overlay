@@ -33,36 +33,35 @@ export function draw(p, s, brandName) {
   s.brandH = brandH;
   s.headlineFullW = bannerW - brandW;
 
-  s.logoReveal = dtLerp(s.logoReveal, s.logoRevealTarget.get(), LERP_SPEED, dt);
-  s.headlineExpand = dtLerp(s.headlineExpand, s.headlineTarget.get(), LERP_SPEED, dt);
+  s.logoReveal = dtLerp(s.logoReveal, s.logoRevealTarget, LERP_SPEED, dt);
+  s.headlineExpand = dtLerp(s.headlineExpand, s.headlineTarget, LERP_SPEED, dt);
 
-  if (Math.abs(s.logoReveal - s.logoRevealTarget.get()) < 0.005) s.logoReveal = s.logoRevealTarget.get();
-  if (Math.abs(s.headlineExpand - s.headlineTarget.get()) < 0.005) s.headlineExpand = s.headlineTarget.get();
+  if (Math.abs(s.logoReveal - s.logoRevealTarget) < 0.005) s.logoReveal = s.logoRevealTarget;
+  if (Math.abs(s.headlineExpand - s.headlineTarget) < 0.005) s.headlineExpand = s.headlineTarget;
 
-  if (s.isExpanding.get() && s.headlineExpand >= 0.995) {
-    s.isExpanding.set(false);
-    s.hasOutgoing.set(false);
+  if (s.isExpanding && s.headlineExpand >= 0.995) {
+    s.isExpanding = false;
+    s.hasOutgoing = false;
 
-    const dur = s.durationMs.get();
-    if (typeof p.messageDisplayed === "function") p.messageDisplayed(dur);
+    if (typeof p.messageDisplayed === "function") p.messageDisplayed(s.durationMs);
 
-    if (dur !== null && dur > 0) {
+    if (s.durationMs !== null && s.durationMs > 0) {
       clearTimers(s);
       s.displayTimer = setTimeout(() => {
-        s.hasMessage.set(false);
-        s.headlineTarget.set(0);
-        s.currentTitle.set("");
-        s.currentSubtitle.set("");
+        s.hasMessage = false;
+        s.headlineTarget = 0;
+        s.currentTitle = "";
+        s.currentSubtitle = "";
         clearTimers(s);
         startLogoHide(s);
-      }, dur);
+      }, s.durationMs);
     }
   }
 
-  if (!s.hasMessage.get() && s.headlineExpand < 0.005) {
-    s.hasOutgoing.set(false);
+  if (!s.hasMessage && s.headlineExpand < 0.005) {
+    s.hasOutgoing = false;
     if (s.logoReveal < 0.005) {
-      s.brandSide.set(SIDE_RIGHT);
+      s.brandSide = SIDE_RIGHT;
     }
   }
 
@@ -71,8 +70,8 @@ export function draw(p, s, brandName) {
   const brandY = bannerBottom - brandH;
   s.brandY = brandY;
 
-  if (s.isExpanding.get()) {
-    s.brandX = s.brandSide.get() === SIDE_LEFT
+  if (s.isExpanding) {
+    s.brandX = s.brandSide === SIDE_LEFT
       ? bannerRight - brandW - s.headlineFullW * s.headlineExpand
       : bannerLeft + s.headlineFullW * s.headlineExpand;
   } else {

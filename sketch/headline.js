@@ -4,10 +4,10 @@ import {
 } from "./constants.js";
 
 export function drawOutgoing(p, s, ctx) {
-  const outW = s.hasOutgoing.get() ? s.headlineFullW * (1 - s.headlineExpand) : 0;
-  if (!s.hasOutgoing.get() || outW <= 1) return;
+  const outW = s.hasOutgoing ? s.headlineFullW * (1 - s.headlineExpand) : 0;
+  if (!s.hasOutgoing || outW <= 1) return;
 
-  const outSide = s.brandSide.get();
+  const outSide = s.brandSide;
   const outHlX = outSide === SIDE_LEFT ? s.bannerLeft : s.bannerRight - outW;
   const outCenterX = getHeadlineCenter(s, outSide);
 
@@ -20,7 +20,7 @@ export function drawOutgoing(p, s, ctx) {
   ctx.clip();
 
   const centerY = s.bannerBottom - s.brandH / 2 + 3;
-  drawTextContent(p, s, s.outTitle.get(), s.outSubtitle.get(), s.outType.get(), outCenterX, centerY, outHlX, outW, getIconSide(s));
+  drawTextContent(p, s, s.outTitle, s.outSubtitle, s.outType, outCenterX, centerY, outHlX, outW, getIconSide(s));
 
   ctx.restore();
 }
@@ -31,12 +31,12 @@ export function drawIncoming(p, s, ctx) {
 
   let hlX, hlCenterX;
 
-  if (s.isExpanding.get()) {
-    const growSide = getOppositeSide(s.brandSide.get());
+  if (s.isExpanding) {
+    const growSide = getOppositeSide(s.brandSide);
     hlX = growSide === SIDE_LEFT ? s.bannerLeft : s.bannerRight - inW;
     hlCenterX = getHeadlineCenter(s, growSide);
   } else {
-    if (s.brandSide.get() === SIDE_LEFT) {
+    if (s.brandSide === SIDE_LEFT) {
       hlX = s.bannerLeft + s.brandW;
       hlCenterX = s.bannerLeft + s.brandW + s.headlineFullW / 2;
     } else {
@@ -54,7 +54,7 @@ export function drawIncoming(p, s, ctx) {
   ctx.clip();
 
   const centerY = s.bannerBottom - s.brandH / 2 + 3;
-  drawTextContent(p, s, s.currentTitle.get(), s.currentSubtitle.get(), s.currentType.get(), hlCenterX, centerY, hlX, inW, getIconSide(s));
+  drawTextContent(p, s, s.currentTitle, s.currentSubtitle, s.currentType, hlCenterX, centerY, hlX, inW, getIconSide(s));
 
   ctx.restore();
 }
