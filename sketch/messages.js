@@ -1,4 +1,4 @@
-import { LOGO_PAUSE_MS } from "./constants.js";
+import { LOGO_PAUSE_MS, getOppositeSide } from "./constants.js";
 import { clearTimers, startLogoHide } from "./timers.js";
 
 /**
@@ -27,7 +27,7 @@ export function messageReceived(s, msg) {
   if (s.hasMessage && s.headlineExpand > 0.1) {
     // If mid-expansion, the brand flip never happened — do it now
     if (s.isExpanding) {
-      s.brandSide = s.brandSide === "right" ? "left" : "right";
+      s.brandSide = getOppositeSide(s.brandSide);
     }
 
     s.outTitle = s.currentTitle;

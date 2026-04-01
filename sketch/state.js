@@ -1,3 +1,5 @@
+import { SIDE_RIGHT } from "./constants.js";
+
 /**
  * Shared animation state.
  *
@@ -12,8 +14,7 @@ export function createState() {
     headlineExpand: 0,
     headlineTarget: 0,
 
-    // Brand side: "right" or "left" — where the brand currently IS
-    brandSide: "right",
+    brandSide: SIDE_RIGHT,
     isExpanding: false,
 
     // Incoming content

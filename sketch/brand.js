@@ -1,4 +1,4 @@
-import { PANEL_COLOR } from "./constants.js";
+import { PANEL_COLOR, SIDE_RIGHT } from "./constants.js";
 
 /**
  * Brand logo — clip wipe from nearest edge.
@@ -7,7 +7,7 @@ export function drawBrand(p, s, ctx, brandName) {
   if (s.logoReveal <= 0.005) return;
 
   const revealW = s.brandW * s.logoReveal;
-  const clipX = s.brandSide === "right"
+  const clipX = s.brandSide === SIDE_RIGHT
     ? s.brandX
     : s.brandX + s.brandW - revealW;
 

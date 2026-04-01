@@ -9,3 +9,32 @@ export const LOGO_IDLE_SHOW = 90000;
 export const LOGO_IDLE_INTERVAL = 15 * 60000;
 export const PAD_X = 16;
 export const PAD_Y = 10;
+
+export const SIDE_LEFT = "left";
+export const SIDE_RIGHT = "right";
+
+export function getOppositeSide(side) {
+  return side === SIDE_LEFT ? SIDE_RIGHT : SIDE_LEFT;
+}
+
+export function getBrandSide(s) {
+  return s.brandSide;
+}
+
+export function getIconSide(s) {
+  return getOppositeSide(getBrandSide(s));
+}
+
+export function getBrandX(s) {
+  return s.brandSide === SIDE_LEFT ? s.bannerLeft : s.bannerRight - s.brandW;
+}
+
+export function getHeadlineEdge(s, side) {
+  return side === SIDE_LEFT ? s.bannerLeft : s.bannerRight;
+}
+
+export function getHeadlineCenter(s, side) {
+  return side === SIDE_LEFT
+    ? s.bannerLeft + s.headlineFullW / 2
+    : s.bannerRight - s.headlineFullW / 2;
+}

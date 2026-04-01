@@ -1,4 +1,4 @@
-import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y } from "./constants.js";
+import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y, SIDE_LEFT, SIDE_RIGHT, getOppositeSide, getBrandX } from "./constants.js";
 import { drawBrand } from "./brand.js";
 import { drawOutgoing, drawIncoming } from "./headline.js";
 import { clearTimers, startLogoHide } from "./timers.js";
@@ -49,7 +49,7 @@ export function draw(p, s, brandName) {
   // Expansion complete — flip brandSide, clear outgoing, start exit timer
   if (s.isExpanding && s.headlineExpand >= 0.995) {
     s.isExpanding = false;
-    s.brandSide = s.brandSide === "right" ? "left" : "right";
+    s.brandSide = getOppositeSide(s.brandSide);
     s.hasOutgoing = false;
 
     if (typeof p.messageDisplayed === "function") p.messageDisplayed(s.durationMs);
@@ -71,7 +71,7 @@ export function draw(p, s, brandName) {
   if (!s.hasMessage && s.headlineExpand < 0.005) {
     s.hasOutgoing = false;
     if (s.logoReveal < 0.005) {
-      s.brandSide = "right";
+      s.brandSide = SIDE_RIGHT;
     }
   }
 
@@ -82,11 +82,11 @@ export function draw(p, s, brandName) {
   s.brandY = brandY;
 
   if (s.isExpanding) {
-    s.brandX = s.brandSide === "right"
+    s.brandX = s.brandSide === SIDE_RIGHT
       ? bannerRight - brandW - s.headlineFullW * s.headlineExpand
       : bannerLeft + s.headlineFullW * s.headlineExpand;
   } else {
-    s.brandX = s.brandSide === "left" ? bannerLeft : bannerRight - brandW;
+    s.brandX = getBrandX(s);
   }
 
   const ctx = p.drawingContext;

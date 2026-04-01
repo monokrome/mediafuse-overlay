@@ -1,5 +1,6 @@
 import {
   PANEL_COLOR, TEXT_COLOR, SUBTITLE_COLOR, PAD_X,
+  SIDE_LEFT, SIDE_RIGHT, getIconSide, getHeadlineCenter,
 } from "./constants.js";
 
 /**
@@ -11,15 +12,9 @@ export function drawOutgoing(p, s, ctx) {
 
   let outHlX, outCenterX;
 
-  if (s.brandSide === "right") {
-    // Brand on right — outgoing headline was on the left, shrinks from left edge
-    outHlX = s.bannerLeft;
-    outCenterX = s.bannerLeft + s.headlineFullW / 2;
-  } else {
-    // Brand on left — outgoing headline was on the right, shrinks from right edge
-    outHlX = s.bannerRight - outW;
-    outCenterX = s.bannerRight - s.headlineFullW / 2;
-  }
+  const outSide = s.brandSide === SIDE_RIGHT ? SIDE_LEFT : SIDE_RIGHT;
+  outHlX = outSide === SIDE_LEFT ? s.bannerLeft : s.bannerRight - outW;
+  outCenterX = getHeadlineCenter(s, outSide);
 
   p.fill(PANEL_COLOR[0], PANEL_COLOR[1], PANEL_COLOR[2], PANEL_COLOR[3]);
   p.rect(outHlX, s.brandY, outW, s.brandH);
@@ -30,7 +25,7 @@ export function drawOutgoing(p, s, ctx) {
   ctx.clip();
 
   const centerY = s.bannerBottom - s.brandH / 2 + 3;
-  drawTextContent(p, s, s.outTitle, s.outSubtitle, s.outType, outCenterX, centerY, outHlX, outW, s.brandSide === "left");
+  drawTextContent(p, s, s.outTitle, s.outSubtitle, s.outType, outCenterX, centerY, outHlX, outW, getIconSide(s));
 
   ctx.restore();
 }
@@ -45,18 +40,11 @@ export function drawIncoming(p, s, ctx) {
   let hlX, hlCenterX;
 
   if (s.isExpanding) {
-    // Brand is moving away from brandSide — headline grows on the side the brand is leaving
-    if (s.brandSide === "right") {
-      // Brand moving left, headline grows from the right edge
-      hlX = s.bannerRight - inW;
-      hlCenterX = s.bannerRight - s.headlineFullW / 2;
-    } else {
-      // Brand moving right, headline grows from the left edge
-      hlX = s.bannerLeft;
-      hlCenterX = s.bannerLeft + s.headlineFullW / 2;
-    }
+    const growSide = s.brandSide === SIDE_RIGHT ? SIDE_RIGHT : SIDE_LEFT;
+    hlX = growSide === SIDE_LEFT ? s.bannerLeft : s.bannerRight - inW;
+    hlCenterX = getHeadlineCenter(s, growSide);
   } else {
-    if (s.brandSide === "left") {
+    if (s.brandSide === SIDE_LEFT) {
       hlX = s.bannerLeft + s.brandW;
       hlCenterX = s.bannerLeft + s.brandW + s.headlineFullW / 2;
     } else {
@@ -74,8 +62,8 @@ export function drawIncoming(p, s, ctx) {
   ctx.clip();
 
   const centerY = s.bannerBottom - s.brandH / 2 + 3;
-  const brandOnLeft = s.brandSide === "left";
-  drawTextContent(p, s, s.currentTitle, s.currentSubtitle, s.currentType, hlCenterX, centerY, hlX, inW, brandOnLeft);
+  const iconSide = getIconSide(s);
+  drawTextContent(p, s, s.currentTitle, s.currentSubtitle, s.currentType, hlCenterX, centerY, hlX, inW, iconSide);
 
   ctx.restore();
 }
@@ -83,7 +71,7 @@ export function drawIncoming(p, s, ctx) {
 /**
  * Shared text + music icon rendering.
  */
-function drawTextContent(p, s, title, subtitle, type, centerX, centerY, hlX, hlW, brandOnLeft) {
+function drawTextContent(p, s, title, subtitle, type, centerX, centerY, hlX, hlW, iconSide) {
   if (subtitle) {
     p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
     p.textSize(s.fontSize);
@@ -103,9 +91,9 @@ function drawTextContent(p, s, title, subtitle, type, centerX, centerY, hlX, hlW
 
   if (type === "music") {
     const iconSize = s.fontSize * 0.8;
-    const iconX = brandOnLeft
-      ? hlX + hlW - PAD_X - iconSize
-      : hlX + PAD_X;
+    const iconX = iconSide === SIDE_LEFT
+      ? hlX + PAD_X
+      : hlX + hlW - PAD_X - iconSize;
     const iconY = s.brandY + (s.brandH - iconSize) / 2;
     p.fill(255);
     p.rect(iconX, iconY, iconSize, iconSize, 2);
