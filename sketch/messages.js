@@ -1,15 +1,12 @@
 import { LOGO_PAUSE_MS, getOppositeSide } from "./constants.js";
 import { clearTimers, startLogoHide } from "./timers.js";
 
-/**
- * Handle an incoming message (or null when queue empties).
- */
 export function messageReceived(s, msg) {
   if (!msg) {
-    s.hasMessage = false;
-    s.headlineTarget = 0;
-    s.currentTitle = "";
-    s.currentSubtitle = "";
+    s.hasMessage.set(false);
+    s.headlineTarget.set(0);
+    s.currentTitle.set("");
+    s.currentSubtitle.set("");
 
     clearTimers(s);
     startLogoHide(s);
@@ -23,32 +20,30 @@ export function messageReceived(s, msg) {
 
   clearTimers(s);
 
-  // Simultaneous swap: old becomes outgoing, new starts expanding
-  if (s.hasMessage && s.headlineExpand > 0.1) {
-    s.outTitle = s.currentTitle;
-    s.outSubtitle = s.currentSubtitle;
-    s.outType = s.currentType;
-    s.hasOutgoing = true;
+  if (s.hasMessage.get() && s.headlineExpand > 0.1) {
+    s.outTitle.set(s.currentTitle.get());
+    s.outSubtitle.set(s.currentSubtitle.get());
+    s.outType.set(s.currentType.get());
+    s.hasOutgoing.set(true);
 
-    s.currentTitle = title;
-    s.currentSubtitle = subtitle;
-    s.currentType = msg.type;
-    s.durationMs = msg.durationMs ?? null;
+    s.currentTitle.set(title);
+    s.currentSubtitle.set(subtitle);
+    s.currentType.set(msg.type);
+    s.durationMs.set(msg.durationMs ?? null);
     s.messageTimestamp = msg.timestamp;
 
-    s.brandSide = getOppositeSide(s.brandSide);
+    s.brandSide.set(getOppositeSide(s.brandSide.get()));
     s.headlineExpand = 0;
-    s.headlineTarget = 1;
-    s.isExpanding = true;
+    s.headlineTarget.set(1);
+    s.isExpanding.set(true);
     return;
   }
 
-  // If logo is revealing but headline hasn't expanded yet, just update content
-  if (s.hasMessage && s.expandTimer) {
-    s.currentTitle = title;
-    s.currentSubtitle = subtitle;
-    s.currentType = msg.type;
-    s.durationMs = msg.durationMs ?? null;
+  if (s.hasMessage.get() && s.expandTimer) {
+    s.currentTitle.set(title);
+    s.currentSubtitle.set(subtitle);
+    s.currentType.set(msg.type);
+    s.durationMs.set(msg.durationMs ?? null);
     s.messageTimestamp = msg.timestamp;
     return;
   }
@@ -57,21 +52,21 @@ export function messageReceived(s, msg) {
 }
 
 function applyMessage(s, msg) {
-  s.currentTitle = msg.data?.title || "";
-  s.currentSubtitle = msg.data?.subtitle || "";
-  s.currentType = msg.type;
-  s.durationMs = msg.durationMs ?? null;
+  s.currentTitle.set(msg.data?.title || "");
+  s.currentSubtitle.set(msg.data?.subtitle || "");
+  s.currentType.set(msg.type);
+  s.durationMs.set(msg.durationMs ?? null);
   s.messageTimestamp = msg.timestamp;
-  s.hasMessage = true;
-  s.hasOutgoing = false;
+  s.hasMessage.set(true);
+  s.hasOutgoing.set(false);
 
-  s.brandSide = getOppositeSide(s.brandSide);
-  s.isExpanding = true;
-  s.logoRevealTarget = 1;
+  s.brandSide.set(getOppositeSide(s.brandSide.get()));
+  s.isExpanding.set(true);
+  s.logoRevealTarget.set(1);
 
   const delay = s.logoReveal < 0.5 ? LOGO_PAUSE_MS + 600 : 0;
   s.expandTimer = setTimeout(() => {
     s.expandTimer = null;
-    s.headlineTarget = 1;
+    s.headlineTarget.set(1);
   }, delay);
 }

@@ -1,4 +1,4 @@
-import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y, SIDE_LEFT, SIDE_RIGHT, getOppositeSide, getBrandX } from "./constants.js";
+import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y, SIDE_LEFT, SIDE_RIGHT, getBrandX } from "./constants.js";
 import { drawBrand } from "./brand.js";
 import { drawOutgoing, drawIncoming } from "./headline.js";
 import { clearTimers, startLogoHide } from "./timers.js";
@@ -8,9 +8,6 @@ function dtLerp(current, target, speed, dt) {
   return current + (target - current) * factor;
 }
 
-/**
- * Main draw loop. Updates animation state and renders all elements.
- */
 export function draw(p, s, brandName) {
   p.clear();
 
@@ -23,12 +20,10 @@ export function draw(p, s, brandName) {
   const bannerRight = p.width * 0.73;
   const bannerW = bannerRight - bannerLeft;
 
-  // Measure brand
   p.textSize(fontSize);
   const brandW = p.textWidth(brandName) + PAD_X * 2;
   const brandH = fontSize + PAD_Y * 2;
 
-  // Store layout in state for external use
   s.fontSize = fontSize;
   s.subtitleSize = subtitleSize;
   s.bannerLeft = bannerLeft;
@@ -38,50 +33,46 @@ export function draw(p, s, brandName) {
   s.brandH = brandH;
   s.headlineFullW = bannerW - brandW;
 
-  // Lerp (frame-rate independent)
-  s.logoReveal = dtLerp(s.logoReveal, s.logoRevealTarget, LERP_SPEED, dt);
-  s.headlineExpand = dtLerp(s.headlineExpand, s.headlineTarget, LERP_SPEED, dt);
+  s.logoReveal = dtLerp(s.logoReveal, s.logoRevealTarget.get(), LERP_SPEED, dt);
+  s.headlineExpand = dtLerp(s.headlineExpand, s.headlineTarget.get(), LERP_SPEED, dt);
 
-  // Snap
-  if (Math.abs(s.logoReveal - s.logoRevealTarget) < 0.005) s.logoReveal = s.logoRevealTarget;
-  if (Math.abs(s.headlineExpand - s.headlineTarget) < 0.005) s.headlineExpand = s.headlineTarget;
+  if (Math.abs(s.logoReveal - s.logoRevealTarget.get()) < 0.005) s.logoReveal = s.logoRevealTarget.get();
+  if (Math.abs(s.headlineExpand - s.headlineTarget.get()) < 0.005) s.headlineExpand = s.headlineTarget.get();
 
-  // Expansion complete — clear outgoing, start exit timer
-  if (s.isExpanding && s.headlineExpand >= 0.995) {
-    s.isExpanding = false;
-    s.hasOutgoing = false;
+  if (s.isExpanding.get() && s.headlineExpand >= 0.995) {
+    s.isExpanding.set(false);
+    s.hasOutgoing.set(false);
 
-    if (typeof p.messageDisplayed === "function") p.messageDisplayed(s.durationMs);
+    const dur = s.durationMs.get();
+    if (typeof p.messageDisplayed === "function") p.messageDisplayed(dur);
 
-    if (s.durationMs !== null && s.durationMs > 0) {
+    if (dur !== null && dur > 0) {
       clearTimers(s);
       s.displayTimer = setTimeout(() => {
-        s.hasMessage = false;
-        s.headlineTarget = 0;
-        s.currentTitle = "";
-        s.currentSubtitle = "";
+        s.hasMessage.set(false);
+        s.headlineTarget.set(0);
+        s.currentTitle.set("");
+        s.currentSubtitle.set("");
         clearTimers(s);
         startLogoHide(s);
-      }, s.durationMs);
+      }, dur);
     }
   }
 
-  // Collapse complete — reset to default side once logo has also exited
-  if (!s.hasMessage && s.headlineExpand < 0.005) {
-    s.hasOutgoing = false;
+  if (!s.hasMessage.get() && s.headlineExpand < 0.005) {
+    s.hasOutgoing.set(false);
     if (s.logoReveal < 0.005) {
-      s.brandSide = SIDE_RIGHT;
+      s.brandSide.set(SIDE_RIGHT);
     }
   }
 
   if (s.logoReveal < 0.005 && s.headlineExpand < 0.005) return;
 
-  // Compute brand position
   const brandY = bannerBottom - brandH;
   s.brandY = brandY;
 
-  if (s.isExpanding) {
-    s.brandX = s.brandSide === SIDE_LEFT
+  if (s.isExpanding.get()) {
+    s.brandX = s.brandSide.get() === SIDE_LEFT
       ? bannerRight - brandW - s.headlineFullW * s.headlineExpand
       : bannerLeft + s.headlineFullW * s.headlineExpand;
   } else {

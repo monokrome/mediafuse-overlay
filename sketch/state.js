@@ -1,35 +1,29 @@
 import { SIDE_RIGHT } from "./constants.js";
-
-/**
- * Shared animation state.
- *
- * Single mutable object so every module reads/writes the same values.
- */
+import { signal } from "./signal.js";
 
 export function createState() {
   return {
-    // Animation values (lerped each frame)
-    logoReveal: 0,
-    logoRevealTarget: 0,
-    headlineExpand: 0,
-    headlineTarget: 0,
+    // Reactive — drives behavior changes
+    brandSide: signal(SIDE_RIGHT),
+    hasMessage: signal(false),
+    headlineTarget: signal(0),
+    logoRevealTarget: signal(0),
+    isExpanding: signal(false),
+    currentTitle: signal(""),
+    currentSubtitle: signal(""),
+    currentType: signal(null),
+    durationMs: signal(null),
+    hasOutgoing: signal(false),
+    outTitle: signal(""),
+    outSubtitle: signal(""),
+    outType: signal(null),
 
-    brandSide: SIDE_RIGHT,
-    isExpanding: false,
-
-    // Incoming content
-    currentTitle: "",
-    currentSubtitle: "",
-    currentType: null,
-    durationMs: null,
+    // Non-reactive (set per message, read in timers)
     messageTimestamp: 0,
-    hasMessage: false,
 
-    // Outgoing content (during simultaneous swap)
-    outTitle: "",
-    outSubtitle: "",
-    outType: null,
-    hasOutgoing: false,
+    // Lerped each frame
+    logoReveal: 0,
+    headlineExpand: 0,
 
     // Layout (recomputed each frame)
     brandW: 0,
