@@ -12,7 +12,7 @@ export function createState() {
     currentTitle: "",
     currentSubtitle: "",
     currentType: null,
-    durationMs: null,
+    duration: null,
     hasOutgoing: false,
     outTitle: "",
     outSubtitle: "",

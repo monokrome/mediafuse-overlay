@@ -29,7 +29,7 @@ export function messageReceived(s, msg) {
     s.currentTitle = title;
     s.currentSubtitle = subtitle;
     s.currentType = msg.type;
-    s.durationMs = msg.durationMs ?? null;
+    s.duration = msg.duration ?? null;
     s.messageTimestamp = msg.timestamp;
 
     s.brandSide = getOppositeSide(s.brandSide);
@@ -43,7 +43,7 @@ export function messageReceived(s, msg) {
     s.currentTitle = title;
     s.currentSubtitle = subtitle;
     s.currentType = msg.type;
-    s.durationMs = msg.durationMs ?? null;
+    s.duration = msg.duration ?? null;
     s.messageTimestamp = msg.timestamp;
     return;
   }
@@ -55,7 +55,7 @@ function applyMessage(s, msg) {
   s.currentTitle = msg.data?.title || "";
   s.currentSubtitle = msg.data?.subtitle || "";
   s.currentType = msg.type;
-  s.durationMs = msg.durationMs ?? null;
+  s.duration = msg.duration ?? null;
   s.messageTimestamp = msg.timestamp;
   s.hasMessage = true;
   s.hasOutgoing = false;

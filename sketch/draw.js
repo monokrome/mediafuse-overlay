@@ -43,9 +43,9 @@ export function draw(p, s, brandName) {
     s.isExpanding = false;
     s.hasOutgoing = false;
 
-    if (typeof p.messageDisplayed === "function") p.messageDisplayed(s.durationMs);
+    if (typeof p.messageDisplayed === "function") p.messageDisplayed(s.duration);
 
-    if (s.durationMs !== null && s.durationMs > 0) {
+    if (s.duration !== null && s.duration > 0) {
       clearTimers(s);
       s.displayTimer = setTimeout(() => {
         s.hasMessage = false;
@@ -54,7 +54,7 @@ export function draw(p, s, brandName) {
         s.currentSubtitle = "";
         clearTimers(s);
         startLogoHide(s);
-      }, s.durationMs);
+      }, s.duration * 1000);
     }
   }
 
