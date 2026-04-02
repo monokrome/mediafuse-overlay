@@ -43,6 +43,12 @@ export function draw(p, s, brandName) {
     s.isExpanding = false;
     s.hasOutgoing = false;
 
+    console.log("[overlay] expansion complete", {
+      durationMs: s.durationMs,
+      hasMessageDisplayed: typeof p.messageDisplayed === "function",
+      title: s.currentTitle,
+    });
+
     if (typeof p.messageDisplayed === "function") p.messageDisplayed(s.durationMs);
 
     if (s.durationMs !== null && s.durationMs > 0) {
