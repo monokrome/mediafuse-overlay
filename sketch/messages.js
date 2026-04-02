@@ -2,14 +2,6 @@ import { LOGO_PAUSE_MS, getOppositeSide } from "./constants.js";
 import { clearTimers, startLogoHide } from "./timers.js";
 
 export function messageReceived(s, msg) {
-  console.log("[overlay] messageReceived", {
-    type: msg?.type,
-    durationMs: msg?.durationMs,
-    timestamp: msg?.timestamp,
-    prevTimestamp: s.messageTimestamp,
-    hasMessage: s.hasMessage,
-  });
-
   if (!msg) {
     s.hasMessage = false;
     s.headlineTarget = 0;

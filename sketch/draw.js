@@ -1,4 +1,4 @@
-import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y, SIDE_LEFT, SIDE_RIGHT, getBrandX } from "./constants.js";
+import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y, SIDE_LEFT, getBrandX } from "./constants.js";
 import { drawBrand } from "./brand.js";
 import { drawOutgoing, drawIncoming } from "./headline.js";
 import { clearTimers, startLogoHide } from "./timers.js";
@@ -43,12 +43,6 @@ export function draw(p, s, brandName) {
     s.isExpanding = false;
     s.hasOutgoing = false;
 
-    console.log("[overlay] expansion complete", {
-      durationMs: s.durationMs,
-      hasMessageDisplayed: typeof p.messageDisplayed === "function",
-      title: s.currentTitle,
-    });
-
     if (typeof p.messageDisplayed === "function") p.messageDisplayed(s.durationMs);
 
     if (s.durationMs !== null && s.durationMs > 0) {
@@ -76,13 +70,7 @@ export function draw(p, s, brandName) {
   const brandY = bannerBottom - brandH;
   s.brandY = brandY;
 
-  if (s.isExpanding) {
-    s.brandX = s.brandSide === SIDE_LEFT
-      ? bannerRight - brandW - s.headlineFullW * s.headlineExpand
-      : bannerLeft + s.headlineFullW * s.headlineExpand;
-  } else {
-    s.brandX = getBrandX(s);
-  }
+  s.brandX = getBrandX(s);
 
   const ctx = p.drawingContext;
   p.push();
