@@ -32,9 +32,13 @@ export function drawIncoming(p, s, ctx) {
   let hlX, hlCenterX;
 
   if (s.isExpanding) {
-    const growSide = getOppositeSide(s.brandSide);
-    hlX = growSide === SIDE_LEFT ? s.bannerLeft : s.bannerRight - inW;
-    hlCenterX = getHeadlineCenter(s, growSide);
+    if (s.brandSide === SIDE_LEFT) {
+      hlX = s.bannerLeft + s.brandW;
+      hlCenterX = s.bannerLeft + s.brandW + s.headlineFullW / 2;
+    } else {
+      hlX = s.bannerRight - s.brandW - inW;
+      hlCenterX = s.bannerRight - s.brandW - s.headlineFullW / 2;
+    }
   } else {
     if (s.brandSide === SIDE_LEFT) {
       hlX = s.bannerLeft + s.brandW;
