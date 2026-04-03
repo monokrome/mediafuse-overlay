@@ -1,4 +1,4 @@
-import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y, SIDE_LEFT, SIDE_RIGHT } from "./constants.js";
+import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y, SIDE_LEFT, SIDE_RIGHT, PANEL_ANIM_DURATION } from "./constants.js";
 import { drawBrand } from "./brand.js";
 import { drawLeftPanel, drawRightPanel } from "./headline.js";
 import { clearTimers, startLogoHide } from "./timers.js";
@@ -10,6 +10,30 @@ function dtLerp(current, target, speed, dt) {
 
 function snap(value, target) {
   return Math.abs(value - target) < 0.005 ? target : value;
+}
+
+function easeIn(t) {
+  return t * t;
+}
+
+function easeOut(t) {
+  return 1 - (1 - t) * (1 - t);
+}
+
+function advancePanel(s, key, dt) {
+  const progressKey = "_" + key + "Progress";
+  const target = s[key + "Target"];
+  const expanding = target === 1;
+
+  if (s[progressKey] === undefined) s[progressKey] = s[key + "Expand"] > 0.5 ? 1 : 0;
+
+  if (expanding && s[progressKey] < 1) {
+    s[progressKey] = Math.min(1, s[progressKey] + dt / PANEL_ANIM_DURATION);
+    s[key + "Expand"] = easeIn(s[progressKey]);
+  } else if (!expanding && s[progressKey] > 0) {
+    s[progressKey] = Math.max(0, s[progressKey] - dt / PANEL_ANIM_DURATION);
+    s[key + "Expand"] = easeOut(s[progressKey]);
+  }
 }
 
 export function draw(p, s, brandName) {
@@ -37,27 +61,23 @@ export function draw(p, s, brandName) {
   s.brandH = brandH;
   s.headlineFullW = bannerW - brandW;
 
-  // Lerp panels and logo
+  // Logo uses lerp, panels use time-based easing
   s.logoReveal = snap(dtLerp(s.logoReveal, s.logoRevealTarget, LERP_SPEED, dt), s.logoRevealTarget);
-  s.leftExpand = snap(dtLerp(s.leftExpand, s.leftTarget, LERP_SPEED, dt), s.leftTarget);
-  s.rightExpand = snap(dtLerp(s.rightExpand, s.rightTarget, LERP_SPEED, dt), s.rightTarget);
+  advancePanel(s, "left", dt);
+  advancePanel(s, "right", dt);
 
-  // Detect expansion complete — either panel just finished expanding
-  const leftDone = s.leftTarget === 1 && s.leftExpand >= 0.995;
-  const rightDone = s.rightTarget === 1 && s.rightExpand >= 0.995;
-
-  if (leftDone && s._leftWasExpanding) {
+  // Detect expansion complete
+  if (s.leftTarget === 1 && s._leftProgress >= 1 && s._leftWasExpanding) {
     s._leftWasExpanding = false;
     onExpansionComplete(p, s);
   }
-  if (rightDone && s._rightWasExpanding) {
+  if (s.rightTarget === 1 && s._rightProgress >= 1 && s._rightWasExpanding) {
     s._rightWasExpanding = false;
     onExpansionComplete(p, s);
   }
 
-  // Track whether panels are actively expanding
-  if (s.leftTarget === 1 && s.leftExpand < 0.995) s._leftWasExpanding = true;
-  if (s.rightTarget === 1 && s.rightExpand < 0.995) s._rightWasExpanding = true;
+  if (s.leftTarget === 1 && s._leftProgress < 1) s._leftWasExpanding = true;
+  if (s.rightTarget === 1 && s._rightProgress < 1) s._rightWasExpanding = true;
 
   // Only reset brandSide when fully hidden (logo gone too)
   if (s.logoReveal < 0.005 && s.leftExpand < 0.005 && s.rightExpand < 0.005) {
