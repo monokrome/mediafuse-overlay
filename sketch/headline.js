@@ -50,10 +50,12 @@ export function drawRightPanel(p, s, ctx) {
 function drawTextContent(p, s, title, subtitle, type, centerX, centerY, hlX, hlW, iconSide) {
   if (subtitle) {
     p.textSize(s.fontSize);
-    const titleH = p.textAscent() + p.textDescent();
+    const titleAsc = p.textAscent();
+    const titleDesc = p.textDescent();
     p.textSize(s.subtitleSize);
-    const subH = p.textAscent() + p.textDescent();
-    const totalH = titleH + subH;
+    const subAsc = p.textAscent();
+    const subDesc = p.textDescent();
+    const totalH = titleAsc + subAsc + subDesc;
     const topY = centerY - totalH / 2;
 
     p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
@@ -64,7 +66,7 @@ function drawTextContent(p, s, title, subtitle, type, centerX, centerY, hlX, hlW
     p.fill(SUBTITLE_COLOR[0], SUBTITLE_COLOR[1], SUBTITLE_COLOR[2], SUBTITLE_COLOR[3]);
     p.textSize(s.subtitleSize);
     p.textAlign(p.CENTER, p.TOP);
-    p.text(subtitle, centerX, topY + titleH);
+    p.text(subtitle, centerX, topY + titleAsc + titleDesc * 0.2);
   } else {
     p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
     p.textSize(s.fontSize);
