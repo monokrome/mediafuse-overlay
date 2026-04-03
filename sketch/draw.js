@@ -62,6 +62,7 @@ export function draw(p, s, brandName) {
   // Only reset brandSide when fully hidden (logo gone too)
   if (s.logoReveal < 0.005 && s.leftExpand < 0.005 && s.rightExpand < 0.005) {
     s.brandSide = SIDE_RIGHT;
+    s.brandX = bannerRight - s.brandW;
   }
 
   if (s.logoReveal < 0.005 && s.leftExpand < 0.005 && s.rightExpand < 0.005) return;
@@ -70,12 +71,11 @@ export function draw(p, s, brandName) {
   s.brandY = brandY;
 
   // Brand only moves when a panel is expanding — contracting panels don't move it.
+  // After expansion, brandX stays where it landed.
   if (s.rightTarget === 1 && s.rightExpand > 0.005) {
     s.brandX = bannerRight - s.brandW - s.headlineFullW * s.rightExpand;
   } else if (s.leftTarget === 1 && s.leftExpand > 0.005) {
     s.brandX = bannerLeft + s.headlineFullW * s.leftExpand;
-  } else if (s.leftExpand < 0.005 && s.rightExpand < 0.005) {
-    s.brandX = bannerRight - s.brandW;
   }
 
   const ctx = p.drawingContext;
