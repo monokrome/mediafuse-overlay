@@ -4,9 +4,11 @@ export function drawBrand(p, s, ctx, brandName) {
   if (s.logoReveal <= 0.005) return;
 
   const revealW = s.brandW * s.logoReveal;
-  const clipX = s.brandSide === SIDE_LEFT
-    ? s.brandX
-    : s.brandX + s.brandW - revealW;
+  const center = (s.bannerLeft + s.bannerRight) / 2;
+  const brandCenter = s.brandX + s.brandW / 2;
+  const clipX = brandCenter < center
+    ? s.brandX + s.brandW - revealW
+    : s.brandX;
 
   ctx.save();
   ctx.beginPath();
