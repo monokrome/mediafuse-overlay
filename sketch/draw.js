@@ -45,17 +45,15 @@ export function draw(p, s, brandName) {
 
     if (typeof p.messageDisplayed === "function") p.messageDisplayed(s.duration);
 
-    if (s.duration !== null && s.duration > 0) {
+    clearTimers(s);
+    s.displayTimer = setTimeout(() => {
+      s.hasMessage = false;
+      s.headlineTarget = 0;
+      s.currentTitle = "";
+      s.currentSubtitle = "";
       clearTimers(s);
-      s.displayTimer = setTimeout(() => {
-        s.hasMessage = false;
-        s.headlineTarget = 0;
-        s.currentTitle = "";
-        s.currentSubtitle = "";
-        clearTimers(s);
-        startLogoHide(s);
-      }, s.duration * 1000);
-    }
+      startLogoHide(s);
+    }, s.duration * 1000);
   }
 
   if (!s.hasMessage && s.headlineExpand < 0.005) {
