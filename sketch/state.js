@@ -1,4 +1,4 @@
-import { SIDE_RIGHT, DEFAULT_DISPLAY_SEC } from "./constants.js";
+import { SIDE_RIGHT } from "./constants.js";
 import { reactive } from "./signal.js";
 
 export function createState() {
@@ -12,7 +12,7 @@ export function createState() {
     currentTitle: "",
     currentSubtitle: "",
     currentType: null,
-    duration: DEFAULT_DISPLAY_SEC,
+    duration: 15,
     hasOutgoing: false,
     outTitle: "",
     outSubtitle: "",

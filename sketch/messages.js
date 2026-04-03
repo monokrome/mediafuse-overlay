@@ -1,4 +1,4 @@
-import { LOGO_PAUSE_MS, DEFAULT_DISPLAY_SEC, getOppositeSide } from "./constants.js";
+import { LOGO_PAUSE_MS, getOppositeSide } from "./constants.js";
 import { clearTimers, startLogoHide } from "./timers.js";
 
 export function messageReceived(s, msg) {
@@ -29,7 +29,7 @@ export function messageReceived(s, msg) {
     s.currentTitle = title;
     s.currentSubtitle = subtitle;
     s.currentType = msg.type;
-    s.duration = msg.duration ?? msg.durationMs ?? DEFAULT_DISPLAY_SEC;
+    s.duration = msg.duration ?? msg.durationMs ?? 15;
     s.messageTimestamp = msg.timestamp;
 
     s.brandSide = getOppositeSide(s.brandSide);
@@ -43,7 +43,7 @@ export function messageReceived(s, msg) {
     s.currentTitle = title;
     s.currentSubtitle = subtitle;
     s.currentType = msg.type;
-    s.duration = msg.duration ?? msg.durationMs ?? DEFAULT_DISPLAY_SEC;
+    s.duration = msg.duration ?? msg.durationMs ?? 15;
     s.messageTimestamp = msg.timestamp;
     return;
   }
@@ -55,7 +55,7 @@ function applyMessage(s, msg) {
   s.currentTitle = msg.data?.title || "";
   s.currentSubtitle = msg.data?.subtitle || "";
   s.currentType = msg.type;
-  s.duration = msg.duration ?? msg.durationMs ?? DEFAULT_DISPLAY_SEC;
+  s.duration = msg.duration ?? msg.durationMs ?? 15;
   s.messageTimestamp = msg.timestamp;
   s.hasMessage = true;
   s.hasOutgoing = false;

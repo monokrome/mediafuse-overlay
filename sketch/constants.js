@@ -7,7 +7,6 @@ export const LOGO_PAUSE_MS = 3000;
 export const LOGO_HIDE_DELAY_MS = 3000;
 export const LOGO_IDLE_SHOW = 90000;
 export const LOGO_IDLE_INTERVAL = 15 * 60000;
-export const DEFAULT_DISPLAY_SEC = 15;
 export const PAD_X = 16;
 export const PAD_Y = 10;
 
