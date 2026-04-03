@@ -71,11 +71,10 @@ export function draw(p, s, brandName) {
   const brandY = bannerBottom - brandH;
   s.brandY = brandY;
 
-  // Each panel pushes the brand: right panel pushes left, left panel pushes right.
-  // Use the larger expand value to determine brand position.
-  if (s.rightExpand >= s.leftExpand) {
+  // Brand only moves when a panel is expanding — contracting panels don't move it.
+  if (s.rightTarget === 1 && s.rightExpand > 0.005) {
     s.brandX = bannerRight - s.brandW - s.headlineFullW * s.rightExpand;
-  } else {
+  } else if (s.leftTarget === 1 && s.leftExpand > 0.005) {
     s.brandX = bannerLeft + s.headlineFullW * s.leftExpand;
   }
 
