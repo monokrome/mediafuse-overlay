@@ -81,9 +81,7 @@ function drawTextContent(p, s, title, subtitle, type, centerX, centerY, hlX, hlW
       : hlX + hlW - PAD_X - iconSize;
     const iconY = s.brandY + (s.brandH - iconSize) / 2;
     p.fill(255);
-    p.rect(iconX, iconY, iconSize, iconSize, 2);
-    p.fill(PANEL_COLOR[0], PANEL_COLOR[1], PANEL_COLOR[2]);
-    p.textSize(iconSize * 0.7);
+    p.textSize(iconSize);
     p.textAlign(p.CENTER, p.CENTER);
     p.text("\u266a", iconX + iconSize / 2, iconY + iconSize / 2);
   }
