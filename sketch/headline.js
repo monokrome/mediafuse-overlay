@@ -19,7 +19,7 @@ export function drawLeftPanel(p, s, ctx) {
   ctx.clip();
 
   const centerX = s.brandX - s.headlineFullW / 2;
-  const centerY = s.bannerBottom - s.brandH / 2 + 3;
+  const centerY = s.brandY + s.brandH / 2;
   drawTextContent(p, s, s.leftTitle, s.leftSubtitle, s.leftType, centerX, centerY, hlX, w, SIDE_LEFT);
 
   ctx.restore();
@@ -41,7 +41,7 @@ export function drawRightPanel(p, s, ctx) {
   ctx.clip();
 
   const centerX = s.brandX + s.brandW + s.headlineFullW / 2;
-  const centerY = s.bannerBottom - s.brandH / 2 + 3;
+  const centerY = s.brandY + s.brandH / 2;
   drawTextContent(p, s, s.rightTitle, s.rightSubtitle, s.rightType, centerX, centerY, hlX, w, SIDE_RIGHT);
 
   ctx.restore();
@@ -49,15 +49,22 @@ export function drawRightPanel(p, s, ctx) {
 
 function drawTextContent(p, s, title, subtitle, type, centerX, centerY, hlX, hlW, iconSide) {
   if (subtitle) {
+    p.textSize(s.fontSize);
+    const titleH = p.textAscent() + p.textDescent();
+    p.textSize(s.subtitleSize);
+    const subH = p.textAscent() + p.textDescent();
+    const totalH = titleH + subH;
+    const topY = centerY - totalH / 2;
+
     p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
     p.textSize(s.fontSize);
-    p.textAlign(p.CENTER, p.BOTTOM);
-    p.text(title, centerX, centerY + 1);
+    p.textAlign(p.CENTER, p.TOP);
+    p.text(title, centerX, topY);
 
     p.fill(SUBTITLE_COLOR[0], SUBTITLE_COLOR[1], SUBTITLE_COLOR[2], SUBTITLE_COLOR[3]);
     p.textSize(s.subtitleSize);
     p.textAlign(p.CENTER, p.TOP);
-    p.text(subtitle, centerX, centerY + 3);
+    p.text(subtitle, centerX, topY + titleH);
   } else {
     p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
     p.textSize(s.fontSize);
