@@ -54,8 +54,7 @@ export function drawIncoming(p, s, ctx) {
   ctx.clip();
 
   const centerY = s.bannerBottom - s.brandH / 2 + 3;
-  const iconSide = s.isExpanding ? s.brandSide : getIconSide(s);
-  drawTextContent(p, s, s.currentTitle, s.currentSubtitle, s.currentType, hlCenterX, centerY, hlX, inW, iconSide);
+  drawTextContent(p, s, s.currentTitle, s.currentSubtitle, s.currentType, hlCenterX, centerY, hlX, inW, getIconSide(s));
 
   ctx.restore();
 }
