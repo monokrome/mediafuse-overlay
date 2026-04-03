@@ -32,13 +32,9 @@ export function drawIncoming(p, s, ctx) {
   let hlX, hlCenterX;
 
   if (s.isExpanding) {
-    if (s.brandSide === SIDE_LEFT) {
-      hlX = s.bannerLeft + s.brandW;
-      hlCenterX = s.bannerLeft + s.brandW + s.headlineFullW / 2;
-    } else {
-      hlX = s.bannerRight - s.brandW - inW;
-      hlCenterX = s.bannerRight - s.brandW - s.headlineFullW / 2;
-    }
+    const fromSide = getOppositeSide(s.brandSide);
+    hlX = fromSide === SIDE_LEFT ? s.bannerLeft : s.bannerRight - inW;
+    hlCenterX = getHeadlineCenter(s, fromSide);
   } else {
     if (s.brandSide === SIDE_LEFT) {
       hlX = s.bannerLeft + s.brandW;
@@ -58,7 +54,8 @@ export function drawIncoming(p, s, ctx) {
   ctx.clip();
 
   const centerY = s.bannerBottom - s.brandH / 2 + 3;
-  drawTextContent(p, s, s.currentTitle, s.currentSubtitle, s.currentType, hlCenterX, centerY, hlX, inW, getIconSide(s));
+  const iconSide = s.isExpanding ? s.brandSide : getIconSide(s);
+  drawTextContent(p, s, s.currentTitle, s.currentSubtitle, s.currentType, hlCenterX, centerY, hlX, inW, iconSide);
 
   ctx.restore();
 }

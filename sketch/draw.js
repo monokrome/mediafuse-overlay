@@ -1,4 +1,4 @@
-import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y, SIDE_LEFT, SIDE_RIGHT, getBrandX } from "./constants.js";
+import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y, SIDE_LEFT, SIDE_RIGHT, getBrandX, getOppositeSide } from "./constants.js";
 import { drawBrand } from "./brand.js";
 import { drawOutgoing, drawIncoming } from "./headline.js";
 import { clearTimers, startLogoHide } from "./timers.js";
@@ -68,7 +68,14 @@ export function draw(p, s, brandName) {
   const brandY = bannerBottom - brandH;
   s.brandY = brandY;
 
-  s.brandX = getBrandX(s);
+  if (s.isExpanding) {
+    const fromSide = getOppositeSide(s.brandSide);
+    s.brandX = fromSide === SIDE_LEFT
+      ? s.bannerLeft + s.headlineFullW * s.headlineExpand
+      : s.bannerRight - s.brandW - s.headlineFullW * s.headlineExpand;
+  } else {
+    s.brandX = getBrandX(s);
+  }
 
   const ctx = p.drawingContext;
   p.push();
