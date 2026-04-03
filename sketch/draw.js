@@ -1,4 +1,4 @@
-import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y, SIDE_LEFT, getBrandX } from "./constants.js";
+import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y, SIDE_LEFT, SIDE_RIGHT, getBrandX } from "./constants.js";
 import { drawBrand } from "./brand.js";
 import { drawOutgoing, drawIncoming } from "./headline.js";
 import { clearTimers, startLogoHide } from "./timers.js";
