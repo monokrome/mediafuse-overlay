@@ -35,7 +35,7 @@ export function draw(p, s, brandName) {
   s.bannerBottom = bannerBottom;
   s.brandW = brandW;
   s.brandH = brandH;
-  s.headlineFullW = (bannerW - brandW) / 2;
+  s.headlineFullW = bannerW - brandW;
 
   // Lerp panels and logo
   s.logoReveal = snap(dtLerp(s.logoReveal, s.logoRevealTarget, LERP_SPEED, dt), s.logoRevealTarget);
@@ -71,8 +71,13 @@ export function draw(p, s, brandName) {
   const brandY = bannerBottom - brandH;
   s.brandY = brandY;
 
-  // Brand sits between the two panels
-  s.brandX = bannerLeft + s.headlineFullW * (1 + s.leftExpand - s.rightExpand);
+  // Each panel pushes the brand: right panel pushes left, left panel pushes right.
+  // Use the larger expand value to determine brand position.
+  if (s.rightExpand >= s.leftExpand) {
+    s.brandX = bannerRight - s.brandW - s.headlineFullW * s.rightExpand;
+  } else {
+    s.brandX = bannerLeft + s.headlineFullW * s.leftExpand;
+  }
 
   const ctx = p.drawingContext;
   p.push();
