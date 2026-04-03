@@ -59,11 +59,9 @@ export function draw(p, s, brandName) {
   if (s.leftTarget === 1 && s.leftExpand < 0.995) s._leftWasExpanding = true;
   if (s.rightTarget === 1 && s.rightExpand < 0.995) s._rightWasExpanding = true;
 
-  // Reset when both panels are closed
-  if (!s.hasMessage && s.leftExpand < 0.005 && s.rightExpand < 0.005) {
-    if (s.logoReveal < 0.005) {
-      s.brandSide = SIDE_RIGHT;
-    }
+  // Only reset brandSide when fully hidden (logo gone too)
+  if (s.logoReveal < 0.005 && s.leftExpand < 0.005 && s.rightExpand < 0.005) {
+    s.brandSide = SIDE_RIGHT;
   }
 
   if (s.logoReveal < 0.005 && s.leftExpand < 0.005 && s.rightExpand < 0.005) return;

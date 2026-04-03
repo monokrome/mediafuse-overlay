@@ -8,9 +8,10 @@ export function drawLeftPanel(p, s, ctx) {
   if (w <= 1) return;
 
   const hlX = s.brandX - w;
+  const drawW = w + 1;
 
   p.fill(PANEL_COLOR[0], PANEL_COLOR[1], PANEL_COLOR[2], PANEL_COLOR[3]);
-  p.rect(hlX, s.brandY, w, s.brandH);
+  p.rect(hlX, s.brandY, drawW, s.brandH);
 
   ctx.save();
   ctx.beginPath();
@@ -28,10 +29,11 @@ export function drawRightPanel(p, s, ctx) {
   const w = s.headlineFullW * s.rightExpand;
   if (w <= 1) return;
 
-  const hlX = s.brandX + s.brandW;
+  const hlX = s.brandX + s.brandW - 1;
+  const drawW = w + 1;
 
   p.fill(PANEL_COLOR[0], PANEL_COLOR[1], PANEL_COLOR[2], PANEL_COLOR[3]);
-  p.rect(hlX, s.brandY, w, s.brandH);
+  p.rect(hlX, s.brandY, drawW, s.brandH);
 
   ctx.save();
   ctx.beginPath();
