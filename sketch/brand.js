@@ -1,4 +1,4 @@
-import { PANEL_COLOR, SIDE_RIGHT } from "./constants.js";
+import { PANEL_COLOR, SIDE_LEFT } from "./constants.js";
 
 export function drawBrand(p, s, ctx, brandName) {
   if (s.logoReveal <= 0.005) return;
