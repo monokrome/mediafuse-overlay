@@ -1,60 +1,46 @@
 import {
   PANEL_COLOR, TEXT_COLOR, SUBTITLE_COLOR, PAD_X,
-  SIDE_LEFT, getOppositeSide, getIconSide, getHeadlineCenter,
+  SIDE_LEFT, SIDE_RIGHT,
 } from "./constants.js";
 
-export function drawOutgoing(p, s, ctx) {
-  const outW = s.hasOutgoing ? s.headlineFullW * (1 - s.headlineExpand) : 0;
-  if (!s.hasOutgoing || outW <= 1) return;
+export function drawLeftPanel(p, s, ctx) {
+  const w = s.headlineFullW * s.leftExpand;
+  if (w <= 1) return;
 
-  const outSide = s.brandSide;
-  const outHlX = outSide === SIDE_LEFT ? s.bannerLeft : s.bannerRight - outW;
-  const outCenterX = getHeadlineCenter(s, outSide);
+  const hlX = s.brandX - w;
 
   p.fill(PANEL_COLOR[0], PANEL_COLOR[1], PANEL_COLOR[2], PANEL_COLOR[3]);
-  p.rect(outHlX, s.brandY, outW, s.brandH);
+  p.rect(hlX, s.brandY, w, s.brandH);
 
   ctx.save();
   ctx.beginPath();
-  ctx.rect(outHlX, s.brandY, outW, s.brandH);
+  ctx.rect(hlX, s.brandY, w, s.brandH);
   ctx.clip();
 
+  const centerX = s.brandX - s.headlineFullW / 2;
   const centerY = s.bannerBottom - s.brandH / 2 + 3;
-  drawTextContent(p, s, s.outTitle, s.outSubtitle, s.outType, outCenterX, centerY, outHlX, outW, getIconSide(s));
+  drawTextContent(p, s, s.leftTitle, s.leftSubtitle, s.leftType, centerX, centerY, hlX, w, SIDE_LEFT);
 
   ctx.restore();
 }
 
-export function drawIncoming(p, s, ctx) {
-  const inW = s.headlineFullW * s.headlineExpand;
-  if (s.headlineExpand <= 0.005 || inW <= 1) return;
+export function drawRightPanel(p, s, ctx) {
+  const w = s.headlineFullW * s.rightExpand;
+  if (w <= 1) return;
 
-  let hlX, hlCenterX;
-
-  if (s.isExpanding) {
-    const fromSide = getOppositeSide(s.brandSide);
-    hlX = fromSide === SIDE_LEFT ? s.bannerLeft : s.bannerRight - inW;
-    hlCenterX = getHeadlineCenter(s, fromSide);
-  } else {
-    if (s.brandSide === SIDE_LEFT) {
-      hlX = s.bannerLeft + s.brandW;
-      hlCenterX = s.bannerLeft + s.brandW + s.headlineFullW / 2;
-    } else {
-      hlX = s.brandX - inW;
-      hlCenterX = s.bannerRight - s.brandW - s.headlineFullW / 2;
-    }
-  }
+  const hlX = s.brandX + s.brandW;
 
   p.fill(PANEL_COLOR[0], PANEL_COLOR[1], PANEL_COLOR[2], PANEL_COLOR[3]);
-  p.rect(hlX, s.brandY, inW, s.brandH);
+  p.rect(hlX, s.brandY, w, s.brandH);
 
   ctx.save();
   ctx.beginPath();
-  ctx.rect(hlX, s.brandY, inW, s.brandH);
+  ctx.rect(hlX, s.brandY, w, s.brandH);
   ctx.clip();
 
+  const centerX = s.brandX + s.brandW + s.headlineFullW / 2;
   const centerY = s.bannerBottom - s.brandH / 2 + 3;
-  drawTextContent(p, s, s.currentTitle, s.currentSubtitle, s.currentType, hlCenterX, centerY, hlX, inW, getIconSide(s));
+  drawTextContent(p, s, s.rightTitle, s.rightSubtitle, s.rightType, centerX, centerY, hlX, w, SIDE_RIGHT);
 
   ctx.restore();
 }

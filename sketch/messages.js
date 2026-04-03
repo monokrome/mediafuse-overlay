@@ -1,13 +1,11 @@
-import { LOGO_PAUSE_MS, getOppositeSide } from "./constants.js";
+import { LOGO_PAUSE_MS, SIDE_LEFT, SIDE_RIGHT, getOppositeSide } from "./constants.js";
 import { clearTimers, startLogoHide } from "./timers.js";
 
 export function messageReceived(s, msg) {
   if (!msg) {
     s.hasMessage = false;
-    s.headlineTarget = 0;
-    s.currentTitle = "";
-    s.currentSubtitle = "";
-
+    s.leftTarget = 0;
+    s.rightTarget = 0;
     clearTimers(s);
     startLogoHide(s);
     return;
@@ -20,53 +18,72 @@ export function messageReceived(s, msg) {
 
   clearTimers(s);
 
-  if (s.hasMessage && s.headlineExpand > 0.1) {
-    s.outTitle = s.currentTitle;
-    s.outSubtitle = s.currentSubtitle;
-    s.outType = s.currentType;
-    s.hasOutgoing = true;
+  const duration = msg.duration ?? msg.durationMs ?? 15;
 
-    s.currentTitle = title;
-    s.currentSubtitle = subtitle;
-    s.currentType = msg.type;
-    s.duration = msg.duration ?? msg.durationMs ?? 15;
-    s.messageTimestamp = msg.timestamp;
-
-    s.brandSide = getOppositeSide(s.brandSide);
-    s.headlineExpand = 0;
-    s.headlineTarget = 1;
-    s.isExpanding = true;
+  if (s.hasMessage && (s.leftExpand > 0.1 || s.rightExpand > 0.1)) {
+    swap(s, title, subtitle, msg.type, duration, msg.timestamp);
     return;
   }
 
-  if (s.hasMessage && s.expandTimer) {
-    s.currentTitle = title;
-    s.currentSubtitle = subtitle;
-    s.currentType = msg.type;
-    s.duration = msg.duration ?? msg.durationMs ?? 15;
-    s.messageTimestamp = msg.timestamp;
-    return;
-  }
-
-  applyMessage(s, msg);
+  applyMessage(s, title, subtitle, msg.type, duration, msg.timestamp);
 }
 
-function applyMessage(s, msg) {
-  s.currentTitle = msg.data?.title || "";
-  s.currentSubtitle = msg.data?.subtitle || "";
-  s.currentType = msg.type;
-  s.duration = msg.duration ?? msg.durationMs ?? 15;
-  s.messageTimestamp = msg.timestamp;
-  s.hasMessage = true;
-  s.hasOutgoing = false;
+function swap(s, title, subtitle, type, duration, timestamp) {
+  // The currently active side is opposite of brandSide
+  // Flip brand to the other side, contract old panel, expand new one
+  const newBrandSide = getOppositeSide(s.brandSide);
+  const newMessageSide = getOppositeSide(newBrandSide);
 
+  s.brandSide = newBrandSide;
+
+  if (newMessageSide === SIDE_LEFT) {
+    s.leftTitle = title;
+    s.leftSubtitle = subtitle;
+    s.leftType = type;
+    s.leftTarget = 1;
+    s.rightTarget = 0;
+  } else {
+    s.rightTitle = title;
+    s.rightSubtitle = subtitle;
+    s.rightType = type;
+    s.rightTarget = 1;
+    s.leftTarget = 0;
+  }
+
+  s.currentType = type;
+  s.duration = duration;
+  s.messageTimestamp = timestamp;
+}
+
+function applyMessage(s, title, subtitle, type, duration, timestamp) {
+  // Message appears on the brand's current side, pushing it opposite
+  const messageSide = s.brandSide;
   s.brandSide = getOppositeSide(s.brandSide);
-  s.isExpanding = true;
+
+  if (messageSide === SIDE_LEFT) {
+    s.leftTitle = title;
+    s.leftSubtitle = subtitle;
+    s.leftType = type;
+  } else {
+    s.rightTitle = title;
+    s.rightSubtitle = subtitle;
+    s.rightType = type;
+  }
+
+  s.currentType = type;
+  s.duration = duration;
+  s.messageTimestamp = timestamp;
+  s.hasMessage = true;
+
   s.logoRevealTarget = 1;
 
   const delay = s.logoReveal < 0.5 ? LOGO_PAUSE_MS + 600 : 0;
   s.expandTimer = setTimeout(() => {
     s.expandTimer = null;
-    s.headlineTarget = 1;
+    if (messageSide === SIDE_LEFT) {
+      s.leftTarget = 1;
+    } else {
+      s.rightTarget = 1;
+    }
   }, delay);
 }

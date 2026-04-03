@@ -3,25 +3,32 @@ import { reactive } from "./signal.js";
 
 export function createState() {
   return reactive({
-    // Reactive — drives behavior changes
+    // Reactive
     brandSide: SIDE_RIGHT,
-    hasMessage: false,
-    headlineTarget: 0,
     logoRevealTarget: 0,
-    isExpanding: false,
-    currentTitle: "",
-    currentSubtitle: "",
-    currentType: null,
-    duration: 15,
-    hasOutgoing: false,
-    outTitle: "",
-    outSubtitle: "",
-    outType: null,
 
-    // Non-reactive (plain values on the object)
+    // Left panel
+    leftTitle: "",
+    leftSubtitle: "",
+    leftType: null,
+    leftTarget: 0,
+
+    // Right panel
+    rightTitle: "",
+    rightSubtitle: "",
+    rightType: null,
+    rightTarget: 0,
+
+    // Message state
+    hasMessage: false,
+    duration: 15,
+    currentType: null,
     messageTimestamp: 0,
+
+    // Non-reactive layout values
     logoReveal: 0,
-    headlineExpand: 0,
+    leftExpand: 0,
+    rightExpand: 0,
     brandW: 0,
     brandH: 0,
     brandX: 0,
