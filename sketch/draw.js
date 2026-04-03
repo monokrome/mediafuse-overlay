@@ -77,7 +77,7 @@ export function draw(p, s, brandName) {
   } else if (s.leftTarget === 1 && s.leftExpand > 0.005) {
     s.brandX = bannerLeft + s.headlineFullW * s.leftExpand;
   } else if (s.leftExpand < 0.005 && s.rightExpand < 0.005) {
-    s.brandX = s.brandSide === SIDE_LEFT ? bannerLeft : bannerRight - s.brandW;
+    s.brandX = bannerRight - s.brandW;
   }
 
   const ctx = p.drawingContext;
