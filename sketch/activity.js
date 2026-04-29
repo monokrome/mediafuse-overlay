@@ -63,7 +63,7 @@ export function drawActivity(p, s) {
   if (!s.activityText) return;
   const text = infoDisplayText(s, s.activityText);
   if (text === null) return;
-  const fontSize = s.fontSize * 0.5;
+  const fontSize = s.fontSize;
   p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
   p.textSize(fontSize);
   p.textAlign(p.CENTER, p.BOTTOM);
@@ -113,7 +113,7 @@ export function drawSecondary(p, s) {
   const finalText = infoDisplayText(s, displayText);
   if (finalText === null) return;
 
-  const fontSize = s.fontSize * 0.5;
+  const fontSize = s.fontSize;
   p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
   p.textSize(fontSize);
   p.textAlign(p.CENTER, p.BOTTOM);
