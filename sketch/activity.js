@@ -116,7 +116,7 @@ export function drawSecondary(p, s) {
   p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
   p.textSize(fontSize);
   p.textAlign(p.CENTER, p.CENTER);
-  p.text(finalText, p.width / 2, (s.brandY + s.bannerBottom) / 2);
+  p.text(finalText, p.width / 2, (s.brandY + s.bannerBottom) / 2 + fontSize / 2);
 }
 
 function phaseText(from, to, progress) {
