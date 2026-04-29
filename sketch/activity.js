@@ -62,7 +62,7 @@ function infoDisplayText(s, fullText) {
 
 export function drawActivity(p, s) {
   if (!s.activityText) return;
-  const fontSize = s.fontSize;
+  const fontSize = s.fontSize * 1.5;
   p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
   p.textSize(fontSize);
   p.textAlign(p.CENTER, p.BOTTOM);
@@ -115,8 +115,8 @@ export function drawSecondary(p, s) {
   const fontSize = s.fontSize;
   p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
   p.textSize(fontSize);
-  p.textAlign(p.CENTER, p.BOTTOM);
-  p.text(finalText, p.width / 2, p.height - 6);
+  p.textAlign(p.CENTER, p.CENTER);
+  p.text(finalText, p.width / 2, (s.brandY + s.bannerBottom) / 2);
 }
 
 function phaseText(from, to, progress) {
