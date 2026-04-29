@@ -65,20 +65,37 @@ let fxBuf = null;
 let glitchShader = null;
 let bufW = 0;
 let bufH = 0;
+let shaderBroken = false;
 
 function ensureBuffers(p, w, h) {
-  if (textBufA && w <= bufW && h <= bufH) return;
+  if (textBufA && w <= bufW && h <= bufH) return true;
   const newW = Math.max(bufW, w);
   const newH = Math.max(bufH, h);
-  if (textBufA) textBufA.remove();
-  if (textBufB) textBufB.remove();
-  if (fxBuf) fxBuf.remove();
-  textBufA = p.createGraphics(newW, newH);
-  textBufB = p.createGraphics(newW, newH);
-  fxBuf = p.createGraphics(newW, newH, p.WEBGL);
-  glitchShader = fxBuf.createShader(VERT, FRAG);
-  bufW = newW;
-  bufH = newH;
+  try {
+    if (textBufA) textBufA.remove();
+    if (textBufB) textBufB.remove();
+    if (fxBuf) fxBuf.remove();
+    textBufA = p.createGraphics(newW, newH);
+    textBufB = p.createGraphics(newW, newH);
+    fxBuf = p.createGraphics(newW, newH, p.WEBGL);
+    glitchShader = fxBuf.createShader(VERT, FRAG);
+    bufW = newW;
+    bufH = newH;
+    return true;
+  } catch (err) {
+    console.error("[glitch] WEBGL setup failed, falling back to plain text:", err);
+    shaderBroken = true;
+    return false;
+  }
+}
+
+function fallbackText(p, fromText, toText, progress, cx, cy, fontSize) {
+  const text = progress < 0.5 ? fromText : toText;
+  if (!text) return;
+  p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
+  p.textSize(fontSize);
+  p.textAlign(p.CENTER, p.CENTER);
+  p.text(text, cx, cy);
 }
 
 function renderText(buf, text, fontSize) {
@@ -92,6 +109,11 @@ function renderText(buf, text, fontSize) {
 }
 
 export function drawGlitch(p, fromText, toText, progress, cx, cy, fontSize) {
+  if (shaderBroken) {
+    fallbackText(p, fromText, toText, progress, cx, cy, fontSize);
+    return;
+  }
+
   p.textSize(fontSize);
   const fromW = fromText ? p.textWidth(fromText) : 0;
   const toW = toText ? p.textWidth(toText) : 0;
@@ -99,25 +121,33 @@ export function drawGlitch(p, fromText, toText, progress, cx, cy, fontSize) {
   const w = Math.ceil(Math.max(fromW, toW, 100) + margin * 2);
   const h = Math.ceil(fontSize * 2.5);
 
-  ensureBuffers(p, w, h);
-  renderText(textBufA, fromText, fontSize);
-  renderText(textBufB, toText, fontSize);
+  if (!ensureBuffers(p, w, h)) {
+    fallbackText(p, fromText, toText, progress, cx, cy, fontSize);
+    return;
+  }
 
-  fxBuf.clear();
-  fxBuf.shader(glitchShader);
-  glitchShader.setUniform("uFrom", textBufA);
-  glitchShader.setUniform("uTo", textBufB);
-  glitchShader.setUniform("uProgress", progress);
-  glitchShader.setUniform("uTime", p.millis() / 1000);
-  glitchShader.setUniform("uColor", [
-    TEXT_COLOR[0] / 255,
-    TEXT_COLOR[1] / 255,
-    TEXT_COLOR[2] / 255,
-  ]);
-  fxBuf.noStroke();
-  fxBuf.rect(-bufW / 2, -bufH / 2, bufW, bufH);
+  try {
+    renderText(textBufA, fromText, fontSize);
+    renderText(textBufB, toText, fontSize);
 
-  const drawW = bufW;
-  const drawH = bufH;
-  p.image(fxBuf, cx - drawW / 2, cy - drawH / 2);
+    fxBuf.clear();
+    fxBuf.shader(glitchShader);
+    glitchShader.setUniform("uFrom", textBufA);
+    glitchShader.setUniform("uTo", textBufB);
+    glitchShader.setUniform("uProgress", progress);
+    glitchShader.setUniform("uTime", p.millis() / 1000);
+    glitchShader.setUniform("uColor", [
+      TEXT_COLOR[0] / 255,
+      TEXT_COLOR[1] / 255,
+      TEXT_COLOR[2] / 255,
+    ]);
+    fxBuf.noStroke();
+    fxBuf.rect(-bufW / 2, -bufH / 2, bufW, bufH);
+
+    p.image(fxBuf, cx - bufW / 2, cy - bufH / 2);
+  } catch (err) {
+    console.error("[glitch] shader render failed, falling back:", err);
+    shaderBroken = true;
+    fallbackText(p, fromText, toText, progress, cx, cy, fontSize);
+  }
 }
