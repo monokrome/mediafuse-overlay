@@ -11,6 +11,10 @@ export const LOGO_IDLE_INTERVAL = 15 * 60000;
 export const PAD_X = 16;
 export const PAD_Y = 10;
 
+export const SECONDARY_INTERVAL_MS = 9000;
+export const GLITCH_DURATION_MS = 500;
+export const GLITCH_CHARS = "!@#$%^&*?/<>[]{}_=+~|";
+
 export const SIDE_LEFT = "left";
 export const SIDE_RIGHT = "right";
 

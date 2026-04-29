@@ -4,6 +4,7 @@
     "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-plugins@main/plugins/debug/dist/debug.js",
     "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-plugins@main/plugins/sentry/dist/sentry.js",
     "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-plugins@main/plugins/beefweb/dist/beefweb.js",
+    "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-plugins@main/plugins/d2/dist/d2.js",
     "https://cdn.jsdelivr.net/gh/monokrome/mediafuse-plugins@main/plugins/p5/dist/p5-plugin.js"
   ],
   "config": {

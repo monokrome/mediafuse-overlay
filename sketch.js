@@ -9,6 +9,7 @@
 import { createState } from "./sketch/state.js";
 import { draw } from "./sketch/draw.js";
 import { messageReceived } from "./sketch/messages.js";
+import { commandReceived } from "./sketch/activity.js";
 
 export default function (p) {
   const brandName = "MONOKROMATIC";
@@ -26,5 +27,9 @@ export default function (p) {
 
   p.messageReceived = function (msg) {
     messageReceived(s, msg);
+  };
+
+  p.commandReceived = function (cmd) {
+    commandReceived(s, cmd);
   };
 }

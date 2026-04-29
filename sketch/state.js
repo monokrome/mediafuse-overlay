@@ -25,6 +25,13 @@ export function createState() {
     currentType: null,
     messageTimestamp: 0,
 
+    // Activity / secondary panels (driven by data plugins like d2)
+    activityText: "",
+    secondaryItems: [],
+    secondaryIndex: 0,
+    secondaryLastSwap: 0,
+    secondaryGlitchStart: 0,
+
     // Non-reactive layout values
     logoReveal: 0,
     leftExpand: 0,

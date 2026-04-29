@@ -1,6 +1,7 @@
 import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y, SIDE_LEFT, SIDE_RIGHT, PANEL_ANIM_DURATION } from "./constants.js";
 import { drawBrand } from "./brand.js";
 import { drawLeftPanel, drawRightPanel } from "./headline.js";
+import { drawActivity, drawSecondary } from "./activity.js";
 import { clearTimers, startLogoHide } from "./timers.js";
 
 function dtLerp(current, target, speed, dt) {
@@ -85,8 +86,8 @@ export function draw(p, s, brandName) {
     s.brandX = bannerRight - s.brandW;
   }
 
-  if (s.logoReveal < 0.005 && s.leftExpand < 0.005 && s.rightExpand < 0.005) return;
-
+  // brandY/brandX are needed by activity/secondary even when the banner is hidden,
+  // since they anchor to where the banner WOULD be.
   const brandY = bannerBottom - brandH;
   s.brandY = brandY;
 
@@ -102,9 +103,16 @@ export function draw(p, s, brandName) {
   p.push();
   p.noStroke();
 
-  drawLeftPanel(p, s, ctx);
-  drawRightPanel(p, s, ctx);
-  drawBrand(p, s, ctx, brandName);
+  // Banner (logo + message panels) only when something is visible
+  if (s.logoReveal >= 0.005 || s.leftExpand >= 0.005 || s.rightExpand >= 0.005) {
+    drawLeftPanel(p, s, ctx);
+    drawRightPanel(p, s, ctx);
+    drawBrand(p, s, ctx, brandName);
+  }
+
+  // Activity/secondary draw independently of banner visibility
+  drawActivity(p, s);
+  drawSecondary(p, s);
 
   p.pop();
 }
