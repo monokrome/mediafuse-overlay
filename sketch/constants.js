@@ -14,6 +14,7 @@ export const PAD_Y = 10;
 export const SECONDARY_INTERVAL_MS = 9000;
 export const GLITCH_DURATION_MS = 500;
 export const GLITCH_CHARS = "!@#$%^&*?/<>[]{}_=+~|";
+export const INFO_RESHOW_DELAY_MS = 10000;
 
 export const SIDE_LEFT = "left";
 export const SIDE_RIGHT = "right";

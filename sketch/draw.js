@@ -1,7 +1,7 @@
 import { LERP_SPEED, TARGET_FPS, PAD_X, PAD_Y, SIDE_LEFT, SIDE_RIGHT, PANEL_ANIM_DURATION } from "./constants.js";
 import { drawBrand } from "./brand.js";
 import { drawLeftPanel, drawRightPanel } from "./headline.js";
-import { drawActivity, drawSecondary } from "./activity.js";
+import { drawActivity, drawSecondary, tickInfoState } from "./activity.js";
 import { clearTimers, startLogoHide } from "./timers.js";
 
 function dtLerp(current, target, speed, dt) {
@@ -44,7 +44,7 @@ export function draw(p, s, brandName) {
 
   const fontSize = Math.max(16, Math.min(p.width * 0.022, 32));
   const subtitleSize = fontSize * 0.55;
-  const bannerBottom = p.height - 15;
+  const bannerBottom = p.height - 35;
   const bannerLeft = p.width * 0.27;
   const bannerRight = p.width * 0.73;
   const bannerW = bannerRight - bannerLeft;
@@ -117,6 +117,9 @@ export function draw(p, s, brandName) {
     drawRightPanel(p, s, ctx);
     drawBrand(p, s, ctx, brandName);
   }
+
+  // Activity/secondary visibility state (hide on message, reshow 10s after)
+  tickInfoState(s);
 
   // Activity/secondary draw independently of banner visibility
   drawActivity(p, s);

@@ -3,6 +3,7 @@ import {
   SECONDARY_INTERVAL_MS,
   GLITCH_DURATION_MS,
   GLITCH_CHARS,
+  INFO_RESHOW_DELAY_MS,
 } from "./constants.js";
 
 export function commandReceived(s, cmd) {
@@ -16,13 +17,57 @@ export function commandReceived(s, cmd) {
   }
 }
 
+// Track info-area visibility around message events.
+// State machine: visible → hiding → hidden → showing → visible
+export function tickInfoState(s) {
+  const now = Date.now();
+  const hasMessage = s.hasMessage;
+
+  if (hasMessage) {
+    s.infoLastMessageAt = now;
+    if (s.infoState === "visible") {
+      s.infoState = "hiding";
+      s.infoStateStart = now;
+    } else if (s.infoState === "showing") {
+      // Interrupted; flip back to hiding from current visual state
+      s.infoState = "hiding";
+      s.infoStateStart = now;
+    }
+  }
+
+  if (s.infoState === "hiding" && now - s.infoStateStart >= GLITCH_DURATION_MS) {
+    s.infoState = "hidden";
+  }
+
+  if (s.infoState === "hidden" && !hasMessage && now - s.infoLastMessageAt >= INFO_RESHOW_DELAY_MS) {
+    s.infoState = "showing";
+    s.infoStateStart = now;
+  }
+
+  if (s.infoState === "showing" && now - s.infoStateStart >= GLITCH_DURATION_MS) {
+    s.infoState = "visible";
+  }
+}
+
+function infoDisplayText(s, fullText) {
+  if (s.infoState === "visible") return fullText;
+  if (s.infoState === "hidden") return null;
+  const now = Date.now();
+  const progress = Math.min(1, (now - s.infoStateStart) / GLITCH_DURATION_MS);
+  if (s.infoState === "hiding") return phaseText(fullText, "", progress);
+  if (s.infoState === "showing") return phaseText("", fullText, progress);
+  return fullText;
+}
+
 export function drawActivity(p, s) {
   if (!s.activityText) return;
+  const text = infoDisplayText(s, s.activityText);
+  if (text === null) return;
   const fontSize = s.fontSize * 0.5;
   p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
   p.textSize(fontSize);
   p.textAlign(p.CENTER, p.BOTTOM);
-  p.text(s.activityText, p.width / 2, s.brandY - 6);
+  p.text(text, p.width / 2, s.brandY - 6);
 }
 
 export function drawSecondary(p, s) {
@@ -31,13 +76,16 @@ export function drawSecondary(p, s) {
   const now = Date.now();
   if (!s.secondaryLastSwap) s.secondaryLastSwap = now;
 
-  // Trigger a glitch when interval elapsed
-  if (
-    s.secondaryGlitchStart === 0 &&
-    s.secondaryItems.length > 1 &&
-    now - s.secondaryLastSwap >= SECONDARY_INTERVAL_MS
-  ) {
-    s.secondaryGlitchStart = now;
+  // Don't run rotation timer while hidden — pause it
+  if (s.infoState !== "hidden") {
+    if (
+      s.secondaryGlitchStart === 0 &&
+      s.secondaryItems.length > 1 &&
+      now - s.secondaryLastSwap >= SECONDARY_INTERVAL_MS &&
+      s.infoState === "visible"
+    ) {
+      s.secondaryGlitchStart = now;
+    }
   }
 
   const current = s.secondaryItems[s.secondaryIndex];
@@ -61,11 +109,15 @@ export function drawSecondary(p, s) {
     }
   }
 
+  // Apply hide/show overlay (takes precedence over rotation)
+  const finalText = infoDisplayText(s, displayText);
+  if (finalText === null) return;
+
   const fontSize = s.fontSize * 0.5;
   p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
   p.textSize(fontSize);
-  p.textAlign(p.CENTER, p.TOP);
-  p.text(displayText, p.width / 2, s.brandY + s.brandH + 6);
+  p.textAlign(p.CENTER, p.BOTTOM);
+  p.text(finalText, p.width / 2, p.height - 6);
 }
 
 function phaseText(from, to, progress) {

@@ -31,6 +31,9 @@ export function createState() {
     secondaryIndex: 0,
     secondaryLastSwap: 0,
     secondaryGlitchStart: 0,
+    infoState: "visible",
+    infoStateStart: 0,
+    infoLastMessageAt: 0,
 
     // Non-reactive layout values
     logoReveal: 0,
