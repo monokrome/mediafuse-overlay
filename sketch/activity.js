@@ -29,15 +29,13 @@ export function tickInfoState(s) {
       s.infoState = "hiding";
       s.infoStateStart = now;
     }
-    return;
   }
 
   if (s.infoState === "hiding" && now - s.infoStateStart >= GLITCH_DURATION_MS) {
     s.infoState = "hidden";
-    s.infoMessageEndedAt = now;
   }
 
-  if (s.infoState === "hidden") {
+  if (s.infoState === "hidden" && !hasMessage) {
     if (!s.infoMessageEndedAt) s.infoMessageEndedAt = now;
     if (now - s.infoMessageEndedAt >= INFO_RESHOW_DELAY_MS) {
       s.infoState = "showing";
