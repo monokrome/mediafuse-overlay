@@ -87,7 +87,7 @@ export function drawSecondary(p, s) {
 
   const current = s.secondaryItems[s.secondaryIndex];
   if (!current) return;
-  const currentText = `${current.label}: ${current.value}`;
+  const currentText = formatItem(current);
 
   let displayText = currentText;
   if (s.secondaryGlitchStart > 0) {
@@ -97,11 +97,11 @@ export function drawSecondary(p, s) {
       s.secondaryGlitchStart = 0;
       s.secondaryLastSwap = now;
       const next = s.secondaryItems[s.secondaryIndex];
-      displayText = `${next.label}: ${next.value}`;
+      displayText = formatItem(next);
     } else {
       const nextIdx = (s.secondaryIndex + 1) % s.secondaryItems.length;
       const nextItem = s.secondaryItems[nextIdx];
-      const nextText = `${nextItem.label}: ${nextItem.value}`;
+      const nextText = formatItem(nextItem);
       displayText = phaseText(currentText, nextText, elapsed / GLITCH_DURATION_MS);
     }
   }
@@ -115,6 +115,10 @@ export function drawSecondary(p, s) {
   p.textSize(fontSize);
   p.textAlign(p.CENTER, p.CENTER);
   p.text(finalText, p.width / 2, (s.brandY + s.bannerBottom) / 2 + fontSize / 2);
+}
+
+function formatItem(item) {
+  return item.label ? `${item.label}: ${item.value}` : item.value;
 }
 
 function phaseText(from, to, progress) {
