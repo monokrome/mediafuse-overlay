@@ -86,6 +86,14 @@ export function draw(p, s, brandName) {
     s.brandX = bannerRight - s.brandW;
   }
 
+  // First-frame init: pin brandX to the right edge (idle position).
+  // Without this, an applyMessage that arrives before the first draw frame
+  // leaves brandX at its initial 0, rendering the brand at the bottom-left.
+  if (!s._brandXInit) {
+    s.brandX = bannerRight - s.brandW;
+    s._brandXInit = true;
+  }
+
   // brandY/brandX are needed by activity/secondary even when the banner is hidden,
   // since they anchor to where the banner WOULD be.
   const brandY = bannerBottom - brandH;
