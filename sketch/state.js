@@ -33,7 +33,7 @@ export function createState() {
     secondaryGlitchStart: 0,
     infoState: "visible",
     infoStateStart: 0,
-    infoLastMessageAt: 0,
+    infoMessageEndedAt: 0,
 
     // Non-reactive layout values
     logoReveal: 0,

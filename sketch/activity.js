@@ -17,31 +17,32 @@ export function commandReceived(s, cmd) {
   }
 }
 
-// Track info-area visibility around message events.
+// Track secondary-info visibility around message events.
 // State machine: visible → hiding → hidden → showing → visible
 export function tickInfoState(s) {
   const now = Date.now();
   const hasMessage = s.hasMessage;
 
   if (hasMessage) {
-    s.infoLastMessageAt = now;
-    if (s.infoState === "visible") {
-      s.infoState = "hiding";
-      s.infoStateStart = now;
-    } else if (s.infoState === "showing") {
-      // Interrupted; flip back to hiding from current visual state
+    s.infoMessageEndedAt = 0;
+    if (s.infoState === "visible" || s.infoState === "showing") {
       s.infoState = "hiding";
       s.infoStateStart = now;
     }
+    return;
   }
 
   if (s.infoState === "hiding" && now - s.infoStateStart >= GLITCH_DURATION_MS) {
     s.infoState = "hidden";
+    s.infoMessageEndedAt = now;
   }
 
-  if (s.infoState === "hidden" && !hasMessage && now - s.infoLastMessageAt >= INFO_RESHOW_DELAY_MS) {
-    s.infoState = "showing";
-    s.infoStateStart = now;
+  if (s.infoState === "hidden") {
+    if (!s.infoMessageEndedAt) s.infoMessageEndedAt = now;
+    if (now - s.infoMessageEndedAt >= INFO_RESHOW_DELAY_MS) {
+      s.infoState = "showing";
+      s.infoStateStart = now;
+    }
   }
 
   if (s.infoState === "showing" && now - s.infoStateStart >= GLITCH_DURATION_MS) {
@@ -61,13 +62,11 @@ function infoDisplayText(s, fullText) {
 
 export function drawActivity(p, s) {
   if (!s.activityText) return;
-  const text = infoDisplayText(s, s.activityText);
-  if (text === null) return;
   const fontSize = s.fontSize;
   p.fill(TEXT_COLOR[0], TEXT_COLOR[1], TEXT_COLOR[2]);
   p.textSize(fontSize);
   p.textAlign(p.CENTER, p.BOTTOM);
-  p.text(text, p.width / 2, s.brandY - 6);
+  p.text(s.activityText, p.width / 2, s.brandY - 6);
 }
 
 export function drawSecondary(p, s) {
