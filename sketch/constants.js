@@ -12,7 +12,7 @@ export const PAD_X = 16;
 export const PAD_Y = 10;
 
 export const SECONDARY_INTERVAL_MS = 9000;
-export const GLITCH_DURATION_MS = 1500;
+export const GLITCH_DURATION_MS = 750;
 export const INFO_RESHOW_DELAY_MS = 10000;
 
 export const SIDE_LEFT = "left";
