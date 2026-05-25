@@ -5,12 +5,37 @@ let textBufB = null;
 let bufW = 0;
 let bufH = 0;
 
+function safeRemove(buf) {
+  if (!buf) return;
+  try {
+    buf.remove();
+  } catch {
+    // Buffer's owning p5 instance was destroyed; nothing to clean up
+  }
+}
+
+function buffersStale(p) {
+  if (!textBufA) return false;
+  // If the buffer's p5 instance is gone, _pInst._elements will be missing
+  const inst = textBufA._pInst;
+  if (!inst || !inst._elements) return true;
+  return inst !== p;
+}
+
 function ensureBuffers(p, w, h) {
+  if (buffersStale(p)) {
+    safeRemove(textBufA);
+    safeRemove(textBufB);
+    textBufA = null;
+    textBufB = null;
+    bufW = 0;
+    bufH = 0;
+  }
   if (textBufA && w <= bufW && h <= bufH) return;
   const newW = Math.max(bufW, w);
   const newH = Math.max(bufH, h);
-  if (textBufA) textBufA.remove();
-  if (textBufB) textBufB.remove();
+  safeRemove(textBufA);
+  safeRemove(textBufB);
   textBufA = p.createGraphics(newW, newH);
   textBufB = p.createGraphics(newW, newH);
   bufW = newW;
