@@ -24,6 +24,7 @@ export function tickInfoState(s) {
   const hasMessage = s.hasMessage;
 
   if (hasMessage) {
+    s.infoEverHadMessage = true;
     s.infoMessageEndedAt = 0;
     if (s.infoState === "visible" || s.infoState === "showing") {
       s.infoState = "hiding";
@@ -36,10 +37,16 @@ export function tickInfoState(s) {
   }
 
   if (s.infoState === "hidden" && !hasMessage) {
-    if (!s.infoMessageEndedAt) s.infoMessageEndedAt = now;
-    if (now - s.infoMessageEndedAt >= INFO_RESHOW_DELAY_MS) {
+    if (!s.infoEverHadMessage) {
+      // Clean load, no notification — bring the panel up immediately
       s.infoState = "showing";
       s.infoStateStart = now;
+    } else {
+      if (!s.infoMessageEndedAt) s.infoMessageEndedAt = now;
+      if (now - s.infoMessageEndedAt >= INFO_RESHOW_DELAY_MS) {
+        s.infoState = "showing";
+        s.infoStateStart = now;
+      }
     }
   }
 
